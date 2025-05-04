@@ -1,27 +1,27 @@
 /**
  * App Component
- * 
+ *
  * Serves as the main entry point for the CareerPath application.
  * Renders both the Signup and Login components side by side,
  * allowing users to either register a new account or log in to an existing one.
- * 
+ *
  * This setup is primarily for development and testing purposes,
  * providing easy access to both authentication forms simultaneously.
- * 
+ *
  * @component
  * @returns {JSX.Element} The main application component displaying authentication forms.
- * 
+ *
  * By: Nolan Dela Rosa
- * 
+ *
  * May 3, 2025
  */
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './Login';
-import Signup from './Signup';
-import Dashboard from './Dashboard';
-import PrivateRoute from './PrivateRoute';
-import './App.css';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./Login";
+import Signup from "./Signup";
+import Dashboard from "./Dashboard";
+import PrivateRoute from "./PrivateRoute";
+import "./App.css";
 
 /**
  * The App component serves as the main container for the CareerPath authentication interface.

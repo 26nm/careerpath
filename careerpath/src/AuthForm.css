@@ -1,0 +1,98 @@
+/**
+ * AuthForm.css
+ *
+ * This stylesheet defines the styles for authentication forms (Login & Signup)
+ * in the CareerPath application. It focuses on clean, user-friendly design with
+ * responsive layout, modern UI elements, and subtle interactivity for improved UX.
+ *
+ * Key Styling Highlights:
+ * - `.auth-container`: Provides a card-like layout with padding, shadow, and centered content
+ * - Inputs and Buttons: Styled with consistent padding, rounded corners, hover/focus effects
+ * - `.auth-footer`: Styles for footer text and links (e.g., "Don't have an account?")
+ * - `.auth-error`: Highlights error messages in red for easy visibility
+ *
+ * This styling aims to enhance the visual polish and professionalism of the CareerPath app's
+ * authentication experience, ensuring it is both aesthetically pleasing and accessible.
+ *
+ * Nolan Dela Rosa
+ *
+ * May 3, 2025
+ */
+.auth-container {
+  background: #fefefe;
+  padding: 2rem;
+  max-width: 420px;
+  margin: 5rem auto;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.auth-container:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.auth-container h2 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.6rem;
+}
+
+.auth-container input {
+  display: block;
+  width: 100%;
+  margin: 0 0 1rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.auth-container input:focus {
+  outline: none;
+  border-color: #0077ff;
+  box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.15);
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  background-color: #0066cc;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.auth-container button:hover {
+  background-color: #0052a3;
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #444;
+}
+
+.auth-footer a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.auth-error {
+  color: red;
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
