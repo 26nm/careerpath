@@ -18,10 +18,10 @@
  */
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import "./AuthForm.css";
+import "../styles/AuthForm.css";
 
 /**
  * Signup component

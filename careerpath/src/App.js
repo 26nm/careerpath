@@ -17,10 +17,10 @@
  */
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "./Login";
-import Signup from "./Signup";
-import Dashboard from "./Dashboard";
-import PrivateRoute from "./PrivateRoute";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import PrivateRoute from "./components/PrivateRoute";
 import "./App.css";
 
 /**
