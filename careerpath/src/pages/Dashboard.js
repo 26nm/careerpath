@@ -23,6 +23,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import JobTracker from "../components/JobTracker";
+import "../styles/Dashboard.css";
 
 /**
  * Dashboard Component
@@ -53,7 +54,8 @@ function Dashboard() {
   };
 
   return (
-    <div>
+    <div className="dashboard-container">
+      <h1>CareerPath</h1>
       <h2>Welcome to CareerPath!</h2>
       <p>You're logged in as: {currentUser?.email}</p>
       <button onClick={handleLogout}>Log Out</button>

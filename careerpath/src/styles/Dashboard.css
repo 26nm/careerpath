@@ -1,0 +1,114 @@
+/**
+ * Dashboard.css
+ *
+ * This stylesheet provides styling for the authenticated user dashboard in the CareerPath application.
+ * It includes global layout rules as well as scoped styles for the job application tracker component.
+ *
+ * Key Features:
+ * - Sets a consistent background and font style across the dashboard.
+ * - Styles the logout button and header elements for visual clarity and accessibility.
+ * - Defines layout and spacing for the JobTracker component, including:
+ *    • Input form with responsive fields for position and company
+ *    • Submission button with hover effect
+ *    • Application cards that list stored job entries
+ *
+ * Organized and minimal, this stylesheet ensures the dashboard UI is both clean and user-friendly.
+ *
+ * By: Nolan Dela Rosa
+ * Date: May 10, 2025
+ */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+p {
+  text-align: center;
+  color: #333;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 1rem auto;
+  display: block;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #004999;
+}
+
+/* Job Tracker Styles */
+.job-tracker {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.job-tracker h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  color: #222;
+}
+
+/* Form */
+.job-form {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.job-form input {
+  flex: 1;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.job-form button {
+  padding: 0.6rem 1rem;
+}
+
+/* Application List */
+.application-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.app-card {
+  background: #f1f4f9;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #0066cc;
+}
+
+.app-card strong {
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.app-card em {
+  font-size: 0.9rem;
+  color: #666;
+}
