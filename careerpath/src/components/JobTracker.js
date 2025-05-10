@@ -45,6 +45,9 @@ function JobTracker() {
   const [position, setPosition] = useState("");
   const [company, setCompany] = useState("");
   const [status, setStatus] = useState("Applied");
+  const [editingId, setEditingId] = useState(null);
+  const [editPosition, setEditPosition] = useState("");
+  const [editCompany, setEditCompany] = useState("");
 
   /**
    * useEffect to fetch job applications from Firestore on component mount or when the user changes.
@@ -125,6 +128,56 @@ function JobTracker() {
   };
 
   /**
+   * handleEdit
+   *
+   * Activates edit mode for a specific job application.
+   * Sets the editing state by capturing the application's ID,
+   * and pre-fills local input fields with the current position and company values.
+   * This allows the user to modify the job entry inline before saving.
+   *
+   * @param {Object} app - The application object selected for editing.
+   */
+  const handleEdit = (app) => {
+    setEditingId(app.id);
+    setEditPosition(app.position);
+    setEditCompany(app.company);
+  };
+
+  /**
+   * handleSave
+   *
+   * Saves the updated job application data (position and company) to Firestore.
+   * Checks for an authenticated user and a valid editing ID before proceeding.
+   * Updates the corresponding document in the user's "applications" subcollection,
+   * and reflects the changes in the local state to immediately update the UI.
+   * Once saved, clears the editing state and input fields.
+   *
+   * @returns {Promise<void>} Asynchronous function that updates Firestore and local application list.
+   */
+
+  const handleSave = async () => {
+    if (!currentUser || !editingId) return;
+
+    const appRef = doc(db, "users", currentUser.uid, "applications", editingId);
+    await updateDoc(appRef, {
+      position: editPosition,
+      company: editCompany,
+    });
+
+    setApplications((prev) =>
+      prev.map((app) =>
+        app.id === editingId
+          ? { ...app, position: editPosition, company: editCompany }
+          : app
+      )
+    );
+
+    setEditingId(null);
+    setEditPosition("");
+    setEditCompany("");
+  };
+
+  /**
    * handleDelete
    *
    * Deletes a specific job application from Firestore after user confirmation
@@ -185,38 +238,67 @@ function JobTracker() {
       <div className="application-list">
         {applications.map((app) => (
           <div className="app-card" key={app.id}>
-            <strong>{app.position}</strong>
-            <div>{app.company}</div>
-            <select
-              value={app.status}
-              onChange={(e) => handleStatusChange(app.id, e.target.value)}
-            >
-              <option value="Applied">Applied</option>
-              <option value="Interview Scheduled">Interview Scheduled</option>
-              <option value="Interviewed">Interviewed</option>
-              <option value="Offer Received">Offer Received</option>
-              <option value="Rejected">Rejected</option>
-            </select>
-            <button
-              onClick={() => {
-                handleDelete(app.id);
-              }}
-              title="Delete application"
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "#cc0000",
-                marginTop: "0.5rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.4rem",
-                fontSize: "0.9rem",
-              }}
-            >
-              <FaTrash />
-              Delete
-            </button>
+            {editingId === app.id ? (
+              <>
+                <input
+                  type="text"
+                  value={editPosition}
+                  onChange={(e) => setEditPosition(e.target.value)}
+                  placeholder="Edit position"
+                />
+                <input
+                  type="text"
+                  value={editCompany}
+                  onChange={(e) => setEditCompany(e.target.value)}
+                  placeholder="Edit company"
+                />
+                <button onClick={() => handleSave(app.id)}>Save</button>
+                <button onClick={() => setEditingId(null)}>Cancel</button>
+              </>
+            ) : (
+              <>
+                <strong>{app.position}</strong>
+                <div>{app.company}</div>
+                <select
+                  value={app.status}
+                  onChange={(e) => handleStatusChange(app.id, e.target.value)}
+                >
+                  <option value="Applied">Applied</option>
+                  <option value="Interview Scheduled">
+                    Interview Scheduled
+                  </option>
+                  <option value="Interviewed">Interviewed</option>
+                  <option value="Offer Received">Offer Received</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "0.5rem",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  <button onClick={() => handleEdit(app)}>Edit</button>
+                  <button
+                    onClick={() => handleDelete(app.id)}
+                    title="Delete application"
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "#cc0000",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.4rem",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    <FaTrash />
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>
