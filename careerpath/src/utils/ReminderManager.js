@@ -25,10 +25,10 @@
  * By: Nolan Dela Rosa
  * May 18, 2025
  */
-export function isInterviewWithin24Hours(dateStr, timeStr) {
-  const interviewDateTime = new Date(`${dateStr}T${timeStr}`);
+export function isInterviewWithin24Hours(datetimeStr) {
+  const interviewDateTime = new Date(datetimeStr);
   const now = new Date();
-  const timeDiff = interviewDateTime - now;
+  const timeDiff = interviewDateTime.getTime() - now.getTime();
 
   return timeDiff > 0 && timeDiff <= 24 * 60 * 60 * 1000;
 }

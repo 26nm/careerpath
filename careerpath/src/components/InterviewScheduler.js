@@ -141,10 +141,7 @@ function InterviewScheduler() {
 
         {interviews.map((interview) => {
           const interviewDate = new Date(interview.datetime);
-          const isoDate = interviewDate.toISOString().split("T")[0];
-          const isoTime = interviewDate.toTimeString().split(" ")[0];
-
-          const reminder = formatReminderTag(isoDate, isoTime);
+          const reminder = formatReminderTag(interview.datetime);
 
           const formattedDate = interviewDate.toLocaleDateString();
           const formattedTime = interviewDate.toLocaleTimeString([], {
