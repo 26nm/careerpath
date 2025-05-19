@@ -206,33 +206,34 @@ function JobTracker() {
     <div className="job-tracker">
       <h3>Job Application Tracker</h3>
       <form onSubmit={handleAdd} className="job-form">
-        <input
-          type="text"
-          placeholder="Position"
-          value={position}
-          onChange={(e) => setPosition(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Company"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          required
-        />
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          required
-        >
-          <option value="Applied">Applied</option>
-          <option value="Interview Scheduled">Interview Scheduled</option>
-          <option value="Interviewed">Interviewed</option>
-          <option value="Offer Received">Offer Received</option>
-          <option value="Rejected">Rejected</option>
-        </select>
-
-        <button type="submit">Add</button>
+        <div className="form-row">
+          <input
+            type="text"
+            placeholder="Position"
+            value={position}
+            onChange={(e) => setPosition(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Company"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            required
+          />
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            required
+          >
+            <option value="Applied">Applied</option>
+            <option value="Interview Scheduled">Interview Scheduled</option>
+            <option value="Interviewed">Interviewed</option>
+            <option value="Offer Received">Offer Received</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+          <button type="submit">Add</button>
+        </div>
       </form>
 
       <div className="application-list">

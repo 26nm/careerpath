@@ -23,6 +23,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import JobTracker from "../components/JobTracker";
+import InterviewScheduler from "../components/InterviewScheduler";
 import "../styles/Dashboard.css";
 
 /**
@@ -60,7 +61,10 @@ function Dashboard() {
       <p>You're logged in as: {currentUser?.email}</p>
       <button onClick={handleLogout}>Log Out</button>
 
-      <JobTracker />
+      <div className="dashboard-content">
+        <JobTracker />
+        <InterviewScheduler />
+      </div>
     </div>
   );
 }
