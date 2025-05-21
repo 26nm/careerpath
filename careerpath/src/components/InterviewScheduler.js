@@ -15,7 +15,8 @@
  * Date: May 18, 2025
  */
 import React, { useState, useEffect } from "react";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, doc, addDoc, getDocs } from "firebase/firestore";
+import { updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { formatReminderTag } from "../utils/ReminderManager";
@@ -39,6 +40,15 @@ function InterviewScheduler() {
   const [interviews, setInterviews] = useState([]);
 
   /**
+   * For interview editing
+   */
+  const [editingID, setEditingID] = useState(null);
+  const [editCompany, setEditCompany] = useState("");
+  const [editPosition, setEditPosition] = useState("");
+  const [editDatetime, setEditDatetime] = useState("");
+  const [editStatus, setEditStatus] = useState("Scheduled");
+
+  /**
    * Fetches previously scheduled interviews from Firestore.
    *
    * - Runs on component mount or when the user changes.
@@ -55,7 +65,35 @@ function InterviewScheduler() {
         "interviews"
       );
       const snapshot = await getDocs(interviewsRef);
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      const now = new Date();
+
+      const updates = [];
+      const data = snapshot.docs.map((docSnap) => {
+        const data = docSnap.data();
+        const interviewDate = new Date(data.datetime);
+
+        if (interviewDate < now && data.status === "Scheduled") {
+          updates.push(
+            updateDoc(
+              doc(db, "users", currentUser.uid, "interviews", docSnap.id),
+              {
+                status: "Completed",
+              }
+            )
+          );
+
+          return { id: docSnap.id, ...data, status: "Completed" };
+        }
+
+        return { id: docSnap.id, ...data };
+      });
+
+      if (updates.length > 0) {
+        await Promise.all(updates);
+      }
+
+      data.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
       setInterviews(data);
     };
 
@@ -82,13 +120,103 @@ function InterviewScheduler() {
     };
 
     const ref = collection(db, "users", currentUser.uid, "interviews");
-    await addDoc(ref, newInterview);
+    const docRef = await addDoc(ref, newInterview);
 
     setPosition("");
     setCompany("");
     setDatetime("");
 
-    setInterviews((prev) => [...prev, newInterview]);
+    setInterviews((prev) => {
+      const updated = [...prev, { id: docRef.id, ...newInterview }];
+      return updated.sort(
+        (a, b) => new Date(a.datetime) - new Date(b.datetime)
+      );
+    });
+  };
+
+  /**
+   * Initiates the edit mode for a specific interview.
+   *
+   * - Stores the selected interview’s ID in state to track which entry is being edited.
+   * - Pre-fills local state variables with the interview’s existing data (company, position, datetime).
+   * - These values populate the form fields so the user can make changes.
+   *
+   * @param {Object} interview - The interview object selected for editing.
+   */
+  const handleEdit = (interview) => {
+    setEditingID(interview.id);
+    setEditCompany(interview.company);
+    setEditPosition(interview.position);
+    setEditDatetime(interview.datetime);
+    setEditStatus(interview.status || "Scheduled");
+  };
+
+  /**
+   * Saves changes made to an existing interview entry.
+   *
+   * - Validates that a user is authenticated and an interview is currently being edited.
+   * - Updates the selected interview document in Firestore with new values (company, position, datetime).
+   * - Reflects the changes in local state by mapping over the existing list and replacing the edited item.
+   * - Resets editing state and clears the edit input fields.
+   *
+   * This function ensures that edits made in the UI are persisted to the database
+   * and immediately visible in the updated list of interviews.
+   */
+  const handleSave = async () => {
+    if (!currentUser || !editingID) return;
+
+    const docRef = doc(db, "users", currentUser.uid, "interviews", editingID);
+    await updateDoc(docRef, {
+      company: editCompany,
+      position: editPosition,
+      datetime: editDatetime,
+      status: editStatus,
+    });
+
+    setInterviews((prev) => {
+      const updated = prev.map((i) =>
+        i.id === editingID
+          ? {
+              ...i,
+              company: editCompany,
+              position: editPosition,
+              datetime: editDatetime,
+              status: editStatus,
+            }
+          : i
+      );
+
+      return updated.sort(
+        (a, b) => new Date(a.datetime) - new Date(b.datetime)
+      );
+    });
+
+    setEditingID(null);
+    setEditCompany("");
+    setEditPosition("");
+    setEditDatetime("");
+  };
+
+  /**
+   * Deletes a selected interview from Firestore and updates the UI.
+   *
+   * - Prompts the user with a confirmation dialog before deletion.
+   * - If confirmed, removes the interview document from Firestore using its ID.
+   * - Updates the local interview list by filtering out the deleted entry.
+   *
+   * This ensures that interview entries can be permanently removed both from the database
+   * and from the UI in real time.
+   */
+  const handleDelete = async (id) => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this interview?"
+    );
+    if (!confirm || !currentUser) return;
+
+    const docRef = doc(db, "users", currentUser.uid, "interviews", id);
+    await deleteDoc(docRef);
+
+    setInterviews((prev) => prev.filter((i) => i.id !== id));
   };
 
   const hasUpcomingInterview = interviews.some((interview) => {
@@ -102,9 +230,20 @@ function InterviewScheduler() {
     return formatReminderTag(formattedDate, formattedTime);
   });
 
+  const isToday = (dateString) => {
+    const interviewDate = new Date(dateString);
+    const today = new Date();
+
+    return (
+      interviewDate.getDate() === today.getDate() &&
+      interviewDate.getMonth() === today.getMonth() &&
+      interviewDate.getFullYear() === today.getFullYear()
+    );
+  };
+
   return (
     <div className="interview-scheduler">
-      <h3> Schedule an Interview</h3>
+      <h3>Schedule an Interview</h3>
       <form onSubmit={handleAddInterview} className="job-form">
         <div className="form-row">
           <input
@@ -141,22 +280,86 @@ function InterviewScheduler() {
 
         {interviews.map((interview) => {
           const interviewDate = new Date(interview.datetime);
-          const reminder = formatReminderTag(interview.datetime);
-
-          const formattedDate = interviewDate.toLocaleDateString();
-          const formattedTime = interviewDate.toLocaleTimeString([], {
+          const dateStr = interviewDate.toLocaleDateString();
+          const timeStr = interviewDate.toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           });
+          const reminder = formatReminderTag(dateStr, timeStr);
+
+          if (interviewDate < new Date() && interview.status === "Scheduled") {
+            interview.status = "Completed";
+          }
 
           return (
-            <div className="interview-card" key={interview.id}>
-              <strong>{interview.company}</strong>
-              <div>{interview.position}</div>
-              <em>
-                Scheduled: {formattedDate} at {formattedTime}
-              </em>
-              {reminder && <div className="reminder-tag">{reminder}</div>}
+            <div
+              className={
+                isToday(interview.datetime)
+                  ? "interview-card today-highlight"
+                  : "interview-card"
+              }
+              key={interview.id}
+            >
+              {editingID === interview.id ? (
+                <>
+                  <input
+                    type="text"
+                    value={editCompany}
+                    onChange={(e) => setEditCompany(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    value={editPosition}
+                    onChange={(e) => setEditPosition(e.target.value)}
+                  />
+                  <input
+                    type="datetime-local"
+                    value={editDatetime}
+                    onChange={(e) => setEditDatetime(e.target.value)}
+                  />
+                  <select
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value)}
+                  >
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Canceled">Canceled</option>
+                  </select>
+
+                  <div className="button-group">
+                    <button onClick={handleSave}>Save</button>
+                    <button onClick={() => setEditingID(null)}>Cancel</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <strong>{interview.company}</strong>
+                  <div>{interview.position}</div>
+                  <em>
+                    Scheduled: {dateStr} at {timeStr}
+                    {isToday(interview.datetime) && (
+                      <span className="today-tag"> - Today</span>
+                    )}
+                  </em>
+
+                  <div className="status-label">
+                    Status:{" "}
+                    <span
+                      className={`status ${interview.status.toLowerCase()}`}
+                    >
+                      {interview.status}
+                    </span>
+                  </div>
+
+                  {reminder && <div className="reminder-tag">{reminder}</div>}
+                  <div className="button-group">
+                    <button onClick={() => handleEdit(interview)}>Edit</button>
+                    <button onClick={() => handleDelete(interview.id)}>
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           );
         })}
