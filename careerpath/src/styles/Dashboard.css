@@ -165,3 +165,39 @@ job-form button {
     width: 100%;
   }
 }
+
+.dashboard-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+.dashboard-container {
+  display: flex;
+  gap: 2rem; /* Adjust spacing between Job Tracker, Interview Scheduler, ResumeUploader */
+  justify-content: center;
+  flex-wrap: wrap; /* Ensures proper stacking on small screens */
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.dashboard-header p {
+  margin: 0.25rem 0;
+  color: #444;
+}
+
+.dashboard-header button {
+  margin-top: 0.75rem;
+}

@@ -24,6 +24,7 @@ import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import JobTracker from "../components/JobTracker";
 import InterviewScheduler from "../components/InterviewScheduler";
+import ResumeUploader from "../components/ResumeUploader";
 import "../styles/Dashboard.css";
 
 /**
@@ -55,7 +56,7 @@ function Dashboard() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-header">
       <h1>CareerPath</h1>
       <h2>Welcome to CareerPath!</h2>
       <p>You're logged in as: {currentUser?.email}</p>
@@ -64,6 +65,7 @@ function Dashboard() {
       <div className="dashboard-content">
         <JobTracker />
         <InterviewScheduler />
+        <ResumeUploader />
       </div>
     </div>
   );
