@@ -22,7 +22,7 @@ import { collection, addDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { deleteDoc, doc } from "firebase/firestore";
-import "../styles/Dashboard.css";
+import "../styles/JobTracker.css";
 
 /**
  * JobTracker Component

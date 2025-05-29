@@ -1,0 +1,135 @@
+/**
+ * Job Tracker Component Styles
+ * ----------------------------
+ * This stylesheet defines the layout and styling for the Job Tracker module.
+ *
+ * Sections:
+ * - .job-tracker: Main container styling, including layout, padding, and shadow
+ * - .job-form: Flexbox-based form layout for job input fields and submit button
+ * - .application-list & .app-card: Styling for displaying saved job applications
+ * - .dashboard-content: Responsive layout for dashboard panels
+ * - Responsive styles: Media queries for mobile screens (≤600px)
+ *
+ * Notes:
+ * - Uses soft box shadows and subtle colors for a clean, modern look
+ * - Responsive layout adapts form and card layout for smaller screens
+ * - Designed to integrate side-by-side with Interview Scheduler panel
+ *
+ * By: Nolan Dela Rosa
+ *
+ * May 25, 2025
+ */
+/* Job Tracker Styles */
+.job-tracker {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.job-tracker h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  color: #222;
+}
+
+/* Form */
+.job-tracker .job-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.job-form input {
+  flex: 1;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.job-form button {
+  padding: 0.6rem 1rem;
+}
+
+/* Application List */
+.application-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.app-card {
+  background: #f1f4f9;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #0066cc;
+}
+
+.app-card strong {
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.app-card em {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.dashboard-content {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.job-tracker,
+.interview-scheduler {
+  flex: 1 1 300px;
+  max-width: 500px;
+}
+
+.job-tracker .job-form input,
+.job-tracker .job-form select {
+  flex: 1 1 150px;
+  min-width: 0;
+}
+
+.job-tracker,
+job-form button {
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.job-form .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.job-form input,
+.job-form select,
+.job-form button {
+  flex: 1 1 150px;
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .job-form .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .job-form input,
+  .job-form select,
+  .job-form button {
+    width: 100%;
+  }
+}

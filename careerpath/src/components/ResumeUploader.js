@@ -38,6 +38,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import "../styles/ResumeUploader.css";
+import ResumeParse from "./ResumeParse";
 
 /**
  * ResumeUploader
@@ -62,6 +63,7 @@ function ResumeUploader() {
   const { currentUser } = useAuth();
   const [file, setFile] = useState(null);
   const [resumes, setResumes] = useState([]);
+  const [selectedResume, setSelectedResume] = useState(null);
 
   /**
    * useEffect - Resume Fetcher
@@ -165,9 +167,16 @@ function ResumeUploader() {
             <button onClick={() => handleDelete(resume.id, resume.fileName)}>
               Delete
             </button>
+            <button onClick={() => setSelectedResume(resume)}>Analyze</button>
           </div>
         ))}
       </div>
+
+      {selectedResume && (
+        <ResumeParse
+          resumeText={`Simulated resume text for ${selectedResume.fileName}`}
+        />
+      )}
     </div>
   );
 }

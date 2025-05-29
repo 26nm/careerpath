@@ -51,43 +51,6 @@ button:hover {
   background-color: #004999;
 }
 
-/* Job Tracker Styles */
-.job-tracker {
-  max-width: 600px;
-  margin: 2rem auto;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-.job-tracker h3 {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 1.4rem;
-  color: #222;
-}
-
-/* Form */
-.job-tracker .job-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-
-.job-form input {
-  flex: 1;
-  padding: 0.6rem;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.job-form button {
-  padding: 0.6rem 1rem;
-}
-
 /* Application List */
 .application-list {
   display: flex;
@@ -165,8 +128,7 @@ job-form button {
     width: 100%;
   }
 }
-
-.dashboard-grid {
+*/ .dashboard-grid {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
