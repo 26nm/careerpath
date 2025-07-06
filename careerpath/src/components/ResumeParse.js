@@ -20,7 +20,10 @@
  *
  * May 29, 2025
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { db } from "../firebase/firebase";
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { useAuth } from "../contexts/AuthContext";
 
 /**
  * ResumeParse
@@ -47,6 +50,7 @@ function ResumeParse({ resumeText }) {
   const [qualifications, setQualifications] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [analysis, setAnalysis] = useState(null);
+  const [savedAnalyses, setSavedAnalyses] = useState([]);
 
   /**
    * handleAnalyze
@@ -65,6 +69,55 @@ function ResumeParse({ resumeText }) {
   const handleAnalyze = () => {
     const result = analyzeMatch(qualifications, jobDescription);
     setAnalysis(result);
+  };
+
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const fetchSavedAnalyses = async () => {
+      const analysisRef = collection(
+        db,
+        "users",
+        currentUser.uid,
+        "resumeAnalysis"
+      );
+      const snapshot = await getDocs(analysisRef);
+      const saved = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setSavedAnalyses(saved);
+    };
+
+    fetchSavedAnalyses();
+  }, [currentUser]);
+
+  /**
+   * handleSave
+   * ----------
+   * Saves the current resume analysis result to Firestore under the user's document.
+   *
+   * Preconditions:
+   * - User must be authenticated (currentUser must exist)
+   * - An analysis result must already be generated
+   *
+   * Process:
+   * - Creates a reference to the collection: users/{uid}/resumeAnalysis
+   * - Adds a new document containing the analysis result along with a timestamp
+   * - Notifies the user with an alert once saved successfully
+   *
+   * Notes:
+   * - Data is stored under each user to ensure privacy and user-specific access
+   */
+  const handleSave = async () => {
+    if (!currentUser || !analysis) return;
+
+    const docRef = collection(db, "users", currentUser.uid, "resumeAnalysis");
+    await addDoc(docRef, {
+      ...analysis,
+      savedAt: new Date().toISOString(),
+    });
+
+    alert("Analysis saved!");
   };
 
   return (
@@ -89,8 +142,24 @@ function ResumeParse({ resumeText }) {
         <div className="analysis-result">
           <h4>Analysis Result</h4>
           <pre>{JSON.stringify(analysis, null, 2)}</pre>
+          <button onClick={handleSave}>Save Analysis</button>
         </div>
       )}
+
+      <div className="saved-analyses">
+        <h4>Saved Analyses</h4>
+        {savedAnalyses.length === 0 ? (
+          <p>No saved results yet.</p>
+        ) : (
+          savedAnalyses.map((item) => (
+            <div key={item.id} className="saved-analysis-item">
+              <strong>Match Rate:</strong> {item.matchRate}
+              <br />
+              <strong>Matched Skills:</strong> {item.matched.join(",")}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
@@ -98,42 +167,49 @@ function ResumeParse({ resumeText }) {
 /**
  * analyzeMatch
  * ------------
- * Compares a user's resume qualifications against a job description
- * to identify overlapping skills and calculate a match rate.
+ * Compares a user's resume qualifications and a job description to calculate skill overlap.
  *
- * Steps:
- * - Uses a predefined list of common tech skills
- * - Filters for skills found in the resume text (`foundSkills`)
- * - Filters for skills mentioned in the job description (`jobSkills`)
- * - Computes the intersection of both sets (`matched`)
- * - Calculates a match rate as a percentage of job skills that are also found in the resume
+ * Inputs:
+ * - qualifications: A comma-separated string of skills from the user's resume
+ * - jobDescription: A comma-separated string of skills required in a job posting
  *
- * Returns:
- * An object containing:
- * - foundSkills: Skills detected in the resume
- * - jobSkills: Skills required by the job description
- * - matched: Skills that appear in both
- * - matchRate: A percentage score representing resume-to-job alignment
+ * Processing:
+ * - Splits each input string into an array of lowercase skills
+ * - Trims whitespace and filters out empty entries
+ * - Identifies matching skills between resume and job requirements
+ * - Calculates a match rate based on the proportion of matched skills in the job description
+ *
+ * Output:
+ * Returns an object containing:
+ * - foundSkills: parsed array of skills from the resume
+ * - jobSkills: parsed array of skills from the job description
+ * - matched: array of overlapping skills
+ * - matchRate: string representation of match percentage (e.g., "80%")
  */
-function analyzeMatch(qualifications, jobDescription) {
-  const skills = ["JavaScript", "React", "Firebase", "SQL", "Python"];
+const analyzeMatch = (qualifications, jobDescription) => {
+  const resumeSkills = qualifications
+    .split(",")
+    .map((skill) => skill.trim().toLowerCase())
+    .filter((skill) => skill.length > 0);
 
-  const foundSkills = skills.filter((skill) =>
-    qualifications.toLowerCase().includes(skill.toLowerCase())
-  );
+  const jobSkills = jobDescription
+    .split(",")
+    .map((skill) => skill.trim().toLowerCase())
+    .filter((skill) => skill.length > 0);
 
-  const jobSkills = skills.filter((skill) =>
-    jobDescription.toLowerCase().includes(skill.toLowerCase())
-  );
+  const matched = resumeSkills.filter((skill) => jobSkills.includes(skill));
 
-  const matched = foundSkills.filter((skill) => jobSkills.includes(skill));
+  const matchRate =
+    jobSkills.length > 0
+      ? ((matched.length / jobSkills.length) * 100).toFixed(0) + "%"
+      : "0%";
 
   return {
-    foundSkills,
-    jobSkills,
-    matched,
-    matchRate: `${Math.round((matched.length / jobSkills.length) * 100)}%`,
+    foundSkills: resumeSkills,
+    jobSkills: jobSkills,
+    matched: matched,
+    matchRate: matchRate,
   };
-}
+};
 
 export default ResumeParse;
