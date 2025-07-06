@@ -73,6 +73,23 @@ function ResumeParse({ resumeText }) {
 
   const { currentUser } = useAuth();
 
+  /**
+   * useEffect - Fetch Saved Resume Analyses
+   * ---------------------------------------
+   * Runs when the component mounts or when the authenticated user changes.
+   *
+   * Preconditions:
+   * - A user must be authenticated (currentUser must exist)
+   *
+   * Process:
+   * - Queries Firestore for all saved resume analysis documents under:
+   *   users/{uid}/resumeAnalysis
+   * - Maps the results into an array of objects with Firestore document IDs and data
+   * - Updates local state with the list of saved analyses for rendering
+   *
+   * Notes:
+   * - Ensures users see their previously saved analyses upon visiting or refreshing the page
+   */
   useEffect(() => {
     if (!currentUser) return;
 
