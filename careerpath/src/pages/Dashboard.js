@@ -17,14 +17,12 @@
  *
  * May 3, 2025
  */
-import React from "react";
-import { useAuth } from "../contexts/AuthContext";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase/firebase";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import JobTracker from "../components/JobTracker";
 import InterviewScheduler from "../components/InterviewScheduler";
 import ResumeUploader from "../components/ResumeUploader";
+import ResumeParse from "../components/ResumeParse";
+import Sidebar from "../components/Sidebar";
 import "../styles/Dashboard.css";
 
 /**
@@ -38,35 +36,31 @@ import "../styles/Dashboard.css";
  * @returns {JSX.Element} A dashboard view with user info and a logout button.
  */
 function Dashboard() {
-  const { currentUser } = useAuth();
-  const navigate = useNavigate();
+  const [activeView, setActiveView] = useState("job-tracker");
 
-  /**
-   * Handles user logout by signing out of Firebase Authentication.
-   * On success, navigates the user back to the login screen.
-   * Logs an error to the console if logout fails.
-   */
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/login");
-    } catch (err) {
-      console.error("Logout failed:", err);
+  const renderActiveComponent = () => {
+    switch (activeView) {
+      case "job-tracker":
+        return <JobTracker />;
+
+      case "interview-scheduler":
+        return <InterviewScheduler />;
+
+      case "resume-uploader":
+        return <ResumeUploader />;
+
+      case "resume-analysis":
+        return <ResumeParse />;
+
+      default:
+        return <JobTracker />;
     }
   };
 
   return (
-    <div className="dashboard-header">
-      <h1>CareerPath</h1>
-      <h2>Welcome to CareerPath!</h2>
-      <p>You're logged in as: {currentUser?.email}</p>
-      <button onClick={handleLogout}>Log Out</button>
-
-      <div className="dashboard-content">
-        <JobTracker />
-        <InterviewScheduler />
-        <ResumeUploader />
-      </div>
+    <div className="dashboard-layout">
+      <Sidebar setActiveView={setActiveView} activeView={activeView} />
+      <div className="dashboard-content">{renderActiveComponent()}</div>
     </div>
   );
 }

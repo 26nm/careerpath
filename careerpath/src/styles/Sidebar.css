@@ -1,0 +1,43 @@
+/**
+ * Sidebar.css
+ *
+ * Provides styling for the Sidebar navigation component in the CareerPath dashboard.
+ * This file defines the appearance and behavior of the vertical menu used to navigate
+ * between different dashboard views.
+ *
+ * Key Styles:
+ * - `.sidebar`: Sets fixed width, background, padding, and full viewport height for layout stability.
+ * - `ul`: Removes default list styles and spacing.
+ * - `li`: Styles each navigation item with spacing, hover interaction, and visual feedback.
+ *
+ * Enhancements include:
+ * - Hover color transition for better UX
+ * - Cursor pointer and unselectable text for clearer clickability
+ *
+ * By: Nolan Dela Rosa
+ * July 12, 2025
+ */
+.sidebar {
+  width: 200px;
+  background-color: #f5f5f5;
+  padding: 1rem;
+  height: 100vh;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  margin-bottom: 1rem;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.sidebar li:hover {
+  color: #007bff;
+}
