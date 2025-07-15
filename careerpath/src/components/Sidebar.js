@@ -24,18 +24,44 @@
  */
 import React from "react";
 import "../styles/Sidebar.css";
+import {
+  FaSuitcase,
+  FaCalendarAlt,
+  FaFileUpload,
+  FaChartBar,
+} from "react-icons/fa";
 
-function Sidebar({ setActiveView }) {
+function Sidebar({ setActiveView, activeView }) {
   return (
     <div className="sidebar">
       <h3>CareerPath</h3>
       <ul>
-        <li onClick={() => setActiveView("job-tracker")}>Job Tracker</li>
-        <li onClick={() => setActiveView("interview-scheduler")}>Interviews</li>
-        <li onClick={() => setActiveView("resume-uploader")}>
+        <li
+          className={activeView === "job-tracker" ? "active" : ""}
+          onClick={() => setActiveView("job-tracker")}
+        >
+          <FaSuitcase style={{ marginRight: "8px" }} />
+          JobTracker
+        </li>
+        <li
+          className={activeView === "interview-scheduler" ? "active" : ""}
+          onClick={() => setActiveView("interview-scheduler")}
+        >
+          <FaCalendarAlt style={{ marginRight: "8px " }} />
+          Interviews
+        </li>
+        <li
+          className={activeView === "resume-uploader" ? "active" : ""}
+          onClick={() => setActiveView("resume-uploader")}
+        >
+          <FaFileUpload style={{ marginRight: "8px " }} />
           Resume Uploader
         </li>
-        <li onClick={() => setActiveView("resume-analysis")}>
+        <li
+          className={activeView === "resume-analysis" ? "active" : ""}
+          onClick={() => setActiveView("resume-analysis")}
+        >
+          <FaChartBar style={{ marginRight: "8px " }} />
           Resume Analyzer
         </li>
       </ul>
