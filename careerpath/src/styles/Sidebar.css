@@ -18,6 +18,9 @@
  * July 12, 2025
  */
 .sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 200px;
   background-color: #f5f5f5;
   padding: 1rem;
@@ -56,4 +59,30 @@
 
 .sidebar li:hover {
   transform: translateX(5px);
+}
+
+.logout-area {
+  margin-top: auto;
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.logout-area p {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.logout-area button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-area button:hover {
+  background-color: #c82333;
 }

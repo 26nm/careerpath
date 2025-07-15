@@ -24,6 +24,11 @@
  */
 import React from "react";
 import "../styles/Sidebar.css";
+import { auth } from "../firebase/firebase";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+
 import {
   FaSuitcase,
   FaCalendarAlt,
@@ -32,6 +37,18 @@ import {
 } from "react-icons/fa";
 
 function Sidebar({ setActiveView, activeView }) {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <div className="sidebar">
       <h3>CareerPath</h3>
@@ -62,9 +79,16 @@ function Sidebar({ setActiveView, activeView }) {
           onClick={() => setActiveView("resume-analysis")}
         >
           <FaChartBar style={{ marginRight: "8px " }} />
-          Resume Analyzer
+          Resume Analysis
         </li>
       </ul>
+
+      <div className="logout-area">
+        <p>
+          Signed in as <strong>{currentUser?.email}</strong>
+        </p>
+        <button onClick={handleLogout}>Log Out</button>
+      </div>
     </div>
   );
 }
