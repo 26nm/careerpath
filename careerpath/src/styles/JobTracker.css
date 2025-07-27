@@ -20,8 +20,9 @@
  * May 25, 2025
  */
 /* Job Tracker Styles */
+/* JobTracker.css (Updated for visual polish) */
 .job-tracker {
-  max-width: 600px;
+  max-width: 700px;
   margin: 2rem auto;
   background: #fff;
   padding: 2rem;
@@ -32,86 +33,15 @@
 .job-tracker h3 {
   text-align: center;
   margin-bottom: 1.5rem;
-  font-size: 1.4rem;
-  color: #222;
+  font-size: 1.5rem;
+  color: #1f2937;
 }
 
-/* Form */
-.job-tracker .job-form {
+.job-form {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
-}
-
-.job-form input {
-  flex: 1;
-  padding: 0.6rem;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.job-form button {
-  padding: 0.6rem 1rem;
-}
-
-/* Application List */
-.application-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.app-card {
-  background: #f1f4f9;
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 4px solid #0066cc;
-}
-
-.app-card strong {
-  font-size: 1.1rem;
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.app-card em {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.dashboard-content {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 2rem;
-  flex-wrap: wrap;
-}
-
-.job-tracker,
-.interview-scheduler {
-  flex: 1 1 300px;
-  max-width: 500px;
-}
-
-.job-tracker .job-form input,
-.job-tracker .job-form select {
-  flex: 1 1 150px;
-  min-width: 0;
-}
-
-.job-tracker,
-job-form button {
-  flex-shrink: 0;
-  height: 100%;
-}
-
-.job-form .form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
 }
 
 .job-form input,
@@ -119,10 +49,110 @@ job-form button {
 .job-form button {
   flex: 1 1 150px;
   min-width: 0;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.job-form button {
+  background-color: #4f46e5;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.job-form button:hover {
+  background-color: #4338ca;
+}
+
+.application-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.app-card {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 10px;
+  border-left: 5px solid #4f46e5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: transform 0.1s ease;
+}
+
+.app-card:hover {
+  transform: scale(1.01);
+}
+
+.app-card strong {
+  font-size: 1.1rem;
+  display: block;
+  color: #111827;
+  margin-bottom: 0.2rem;
+}
+
+.app-card .company-label {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-tag.applied {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-tag.interviewed {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.status-tag.offer {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.status-tag.rejected {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-tag.scheduled {
+  background-color: #fef9c3;
+  color: #92400e;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.button-group button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.button-group button:hover {
+  opacity: 0.9;
 }
 
 @media (max-width: 600px) {
-  .job-form .form-row {
+  .job-form {
     flex-direction: column;
     align-items: stretch;
   }

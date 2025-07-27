@@ -33,139 +33,167 @@
 .interview-scheduler h3 {
   text-align: center;
   margin-bottom: 1.5rem;
-  font-size: 1.4rem;
-  color: #222;
+  font-size: 1.6rem;
+  color: #1f2937;
 }
 
-.interview-scheduler .job-form {
+.job-form {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.interview-scheduler .job-form input {
+.job-form input,
+.job-form button {
   padding: 0.6rem;
   font-size: 1rem;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
 
-.interview-scheduler .job-form button {
-  padding: 0.6rem 1rem;
+.job-form button {
   background-color: #0066cc;
   color: white;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
   font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.interview-scheduler .job-form button:hover {
+.job-form button:hover {
   background-color: #004999;
 }
 
-.interview-scheduler .application-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.interview-scheduler .app-card {
-  background: #f1f4f9;
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 4px solid #0066cc;
-}
-
-.interview-scheduler .app-card strong {
-  font-size: 1.1rem;
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.interview-scheduler .app-card em {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.reminder-tag {
-  margin-top: 0.25rem;
-  margin-left: 0.5rem;
-  padding: 0.3rem 0.6rem;
-  background-color: #f8c471; /* Softer orange */
-  color: #333;
-  font-weight: 500;
-  font-size: 0.85rem;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-.interview-scheduler .button-group {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-}
-
-.interview-scheduler .form-row {
+.form-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
 }
 
-.interview-scheduler .form-row input,
-.interview-scheduler,
+.form-row input,
 .form-row button {
   flex: 1 1 150px;
   min-width: 0;
 }
 
 @media (max-width: 600px) {
-  .interview-scheduler .form-row {
+  .form-row {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .interview-scheduler .form-row input,
-  .interview-scheduler .form-row button {
+  .form-row input,
+  .form-row button {
     width: 100%;
   }
 }
 
-.info-row {
+.application-list {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.application-list h4 {
+  margin-bottom: 1rem;
+}
+
+.interview-card {
+  margin-bottom: 1rem;
+}
+
+.interview-card {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 12px;
+  border-left: 6px solid #6366f1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.1s ease;
+}
+
+.interview-card:hover {
+  transform: scale(1.01);
+}
+
+.today-highlight {
+  border-left-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.today-tag {
+  color: #3b82f6;
+  font-weight: bold;
+  margin-left: 6px;
+}
+
+.status-label {
   margin-top: 0.5rem;
+}
+
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: bold;
+  border-radius: 999px;
+}
+
+.status.upcoming {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status.completed {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.status.canceled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.reminder-tag {
+  margin-top: 0.25rem;
+  margin-left: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  background-color: #fde68a;
+  color: #92400e;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 .button-group {
   display: flex;
+  justify-content: center;
   gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.interview-card input,
+.interview-card select {
+  margin-bottom: 0.5rem;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.empty-state {
+  padding: 1rem;
+  text-align: center;
+  font-style: italic;
+  color: #666;
+  background-color: #f9fafb;
+  border-radius: 8px;
 }
 
 @media (max-width: 600px) {
-  .info-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .button-group {
     justify-content: flex-start;
   }
-}
-
-.today-highlight {
-  border-left: 4px solid #2196f3;
-  background-color: #f0f8ff;
-}
-
-.today-tag {
-  color: #2196f3;
-  font-weight: bold;
-  margin-left: 6px;
 }
