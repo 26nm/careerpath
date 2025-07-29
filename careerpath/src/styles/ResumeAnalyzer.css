@@ -1,4 +1,29 @@
-/* ResumeAnalyzer.css */
+/**
+ * ResumeAnalyzer Component Styles
+ *
+ * This stylesheet defines the layout and appearance of the Resume Analyzer component,
+ * which allows users to input resume content and job descriptions, analyze skill match,
+ * and view saved results.
+ *
+ * Sections:
+ * - .resume-parser: Main container for the analyzer tool and form.
+ * - .input-section / .input-block: Layout for side-by-side input fields with labels.
+ * - textarea: Styled input boxes for resume and job description content.
+ * - button: Analyze button with theme color and hover effect.
+ * - .analysis-result: Card for showing parsed match results and skill tags.
+ * - .skill-tag: Pill-shaped tag styling for extracted skills.
+ * - .saved-analyses / .saved-analysis-item: Layout for showing previously saved analyses.
+ * - .empty-state: Message displayed when no saved analyses exist.
+ *
+ * Visual Goals:
+ * - Create a structured layout that clearly separates input, results, and saved items.
+ * - Use clean padding, borders, and colors to enhance readability and visual hierarchy.
+ * - Keep interactions intuitive, while aligning stylistically with the rest of the app.
+ *
+ * By: Nolan Dela Rosa
+ * July 26, 2025
+ */
+
 .resume-parser {
   max-width: 700px;
   margin: 2rem auto;

@@ -22,6 +22,31 @@ import { useAuth } from "../contexts/AuthContext";
 import { formatReminderTag } from "../utils/ReminderManager";
 import "../styles/InterviewScheduler.css";
 
+/**
+ * InterviewScheduler()
+ *
+ * Renders the UI and manages logic for scheduling, editing, and tracking job interviews.
+ *
+ * Responsibilities:
+ * - Allows users to add interviews with position, company, date, and time
+ * - Automatically updates interview status to "Completed" if the scheduled time has passed
+ * - Displays a list of interviews sorted chronologically
+ * - Supports inline editing and deletion of interviews
+ * - Highlights interviews scheduled for today and shows time-sensitive reminders
+ *
+ * Firebase Integration:
+ * - Reads and writes data from `users/{uid}/interviews` in Firestore
+ * - Updates status field automatically if an "Upcoming" interview is now in the past
+ *
+ * State:
+ * - Stores all interview entries and input field values for both add/edit modes
+ * - Tracks which interview is being edited via `editingID`
+ *
+ * UI:
+ * - Displays upcoming interviews with conditional styling (e.g., highlight for today)
+ * - Includes a reminder tag and status label
+ * - Form inputs are cleanly styled and conditionally rendered based on edit mode
+ */
 function InterviewScheduler() {
   const { currentUser } = useAuth();
   const [position, setPosition] = useState("");
@@ -35,7 +60,34 @@ function InterviewScheduler() {
   const [editDatetime, setEditDatetime] = useState("");
   const [editStatus, setEditStatus] = useState("Upcoming");
 
+  /**
+   * useEffect — Fetch and auto-update interviews
+   *
+   * Runs when `currentUser` becomes available. Fetches all interview entries from
+   * Firestore and updates any that are past-due but still marked as "Upcoming".
+   *
+   * Steps:
+   * - Retrieve all documents from the user's `interviews` subcollection
+   * - Check each interview's datetime:
+   *    - If it's in the past and status is "Upcoming", update it to "Completed"
+   * - Sort all interviews chronologically by datetime
+   * - Store the sorted results in component state
+   */
   useEffect(() => {
+    /**
+     * fetchInterviews()
+     *
+     * Retrieves all interview entries for the current user from Firestore,
+     * checks if any "Upcoming" interviews have passed, and updates their status to "Completed".
+     *
+     * Steps:
+     * - Query the user's `interviews` subcollection
+     * - Convert each interview datetime to a JavaScript Date object
+     * - If the datetime is in the past and status is "Upcoming", schedule an update to "Completed"
+     * - Apply all necessary status updates in parallel
+     * - Sort the full list of interviews by datetime (soonest first)
+     * - Update local `interviews` state with the processed and sorted list
+     */
     const fetchInterviews = async () => {
       if (!currentUser) return;
       const interviewsRef = collection(
@@ -75,6 +127,19 @@ function InterviewScheduler() {
     fetchInterviews();
   }, [currentUser]);
 
+  /**
+   * handleAddInterview()
+   *
+   * Handles the form submission to add a new interview to Firestore and update local state.
+   *
+   * Steps:
+   * - Prevents default form behavior
+   * - Validates that the user and all required fields are present
+   * - Constructs a new interview object with default status "Upcoming"
+   * - Saves the new interview to the user's `interviews` subcollection in Firestore
+   * - Clears input fields
+   * - Updates local `interviews` state and re-sorts by datetime
+   */
   const handleAddInterview = async (e) => {
     e.preventDefault();
     if (!currentUser || !position || !company || !datetime) return;
@@ -101,6 +166,14 @@ function InterviewScheduler() {
     });
   };
 
+  /**
+   * handleEdit()
+   *
+   * Prepares the selected interview for editing by populating the edit form fields.
+   *
+   * - Sets `editingID` to the selected interview's ID
+   * - Pre-fills editable fields (company, position, datetime, status) with existing values
+   */
   const handleEdit = (interview) => {
     setEditingID(interview.id);
     setEditCompany(interview.company);
@@ -109,6 +182,17 @@ function InterviewScheduler() {
     setEditStatus(interview.status || "Upcoming");
   };
 
+  /**
+   * handleSave()
+   *
+   * Saves changes made to an existing interview by updating Firestore and local state.
+   *
+   * - Validates that a user is logged in and an interview is being edited
+   * - Updates the Firestore document with new company, position, datetime, and status
+   * - Updates the corresponding entry in local `interviews` state
+   * - Re-sorts the updated list by datetime
+   * - Clears the edit form and exits editing mode
+   */
   const handleSave = async () => {
     if (!currentUser || !editingID) return;
 
@@ -143,6 +227,19 @@ function InterviewScheduler() {
     setEditDatetime("");
   };
 
+  /**
+   * handleDelete()
+   *
+   * Deletes an interview from Firestore and removes it from local state.
+   *
+   * Parameters:
+   * - id: The Firestore document ID of the interview to delete
+   *
+   * Steps:
+   * - Prompts the user for confirmation
+   * - Deletes the interview document from Firestore
+   * - Filters out the deleted interview from the local `interviews` state
+   */
   const handleDelete = async (id) => {
     const confirm = window.confirm(
       "Are you sure you want to delete this interview?"
@@ -155,6 +252,17 @@ function InterviewScheduler() {
     setInterviews((prev) => prev.filter((i) => i.id !== id));
   };
 
+  /**
+   * isToday()
+   *
+   * Checks if the provided date string corresponds to today's date.
+   *
+   * Parameters:
+   * - dateString: A date-time string to evaluate
+   *
+   * Returns:
+   * - true if the date is today, false otherwise
+   */
   const isToday = (dateString) => {
     const interviewDate = new Date(dateString);
     const today = new Date();

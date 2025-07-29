@@ -1,4 +1,28 @@
-/* ResumeUploader.css (Updated) */
+/**
+ * ResumeUploader Component Styles
+ *
+ * This stylesheet defines the layout and appearance of the Resume Uploader section,
+ * including the upload form, styled file input, and list of uploaded resumes.
+ *
+ * Sections:
+ * - .resume-uploader: Main container with centered layout and card-style visuals.
+ * - h3: Header styling for the uploader section title.
+ * - input[type="file"]: Custom file input with full-width layout and padding.
+ * - button: Upload button with consistent theme styling and hover effect.
+ * - .resume-list: Container for displaying uploaded file entries.
+ * - .resume-item: Card-style entry for each resume, including action buttons.
+ * - .resume-item a: Truncated file name display as a link.
+ * - .resume-item button: Distinct color-coded buttons for Delete and Analyze actions.
+ *
+ * Visual Goals:
+ * - Create a clean, professional form interface aligned with app branding.
+ * - Improve user interaction by grouping file actions and applying intuitive button styles.
+ * - Maintain consistent layout and spacing with other dashboard components.
+ *
+ * By: Nolan Dela Rosa
+ * July 26, 2025
+ */
+
 .resume-uploader {
   background-color: white;
   padding: 2rem;

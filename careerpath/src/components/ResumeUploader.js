@@ -40,12 +40,29 @@ import {
 import "../styles/ResumeUploader.css";
 import ResumeParse from "./ResumeParse";
 
+/**
+ * ResumeUploader()
+ *
+ * Handles resume upload functionality for the user.
+ * Allows users to upload files to Firebase Storage, save metadata to Firestore,
+ * view a list of uploaded resumes, delete resumes, and trigger resume analysis.
+ *
+ * Returns:
+ * - A JSX layout containing the upload form, resume list, and conditional analysis view.
+ */
 function ResumeUploader() {
   const { currentUser } = useAuth();
   const [file, setFile] = useState(null);
   const [resumes, setResumes] = useState([]);
   const [selectedResume, setSelectedResume] = useState(null);
 
+  /**
+   * Fetches uploaded resumes from Firestore when the current user is available.
+   *
+   * - Listens for changes to `currentUser`
+   * - Retrieves resume documents from the user's subcollection in Firestore
+   * - Updates local state (`resumes`) with the fetched data
+   */
   useEffect(() => {
     if (!currentUser) return;
 
@@ -59,6 +76,19 @@ function ResumeUploader() {
     fetchResumes();
   }, [currentUser]);
 
+  /**
+   * handleUpload()
+   *
+   * Uploads the selected resume file to Firebase Storage,
+   * saves its metadata to Firestore, and updates the local resume list.
+   *
+   * Steps:
+   * - Aborts if no file is selected or user is not authenticated
+   * - Uploads file to a user-specific path in Firebase Storage
+   * - Retrieves the download URL and constructs a metadata object
+   * - Stores metadata in the user's Firestore "resumes" subcollection
+   * - Updates local `resumes` state to reflect the newly added file
+   */
   const handleUpload = async () => {
     if (!file || !currentUser) return;
 
@@ -79,6 +109,21 @@ function ResumeUploader() {
     setFile(null);
   };
 
+  /**
+   * handleDelete()
+   *
+   * Deletes a resume file from Firebase Storage and removes its metadata from Firestore.
+   *
+   * Parameters:
+   * - resumeId: Firestore document ID of the resume metadata
+   * - fileName: File name used to locate the file in Firebase Storage
+   *
+   * Steps:
+   * - Prompts user for confirmation before proceeding
+   * - Deletes the file from Firebase Storage
+   * - Deletes the corresponding metadata document from Firestore
+   * - Updates local `resumes` state to reflect the removal
+   */
   const handleDelete = async (resumeId, fileName) => {
     const confirm = window.confirm("Delete this resume?");
     if (!confirm || !currentUser) return;
