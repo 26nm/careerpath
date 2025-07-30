@@ -37,6 +37,7 @@ import "../styles/Dashboard.css";
  */
 function Dashboard() {
   const [activeView, setActiveView] = useState("job-tracker");
+  const [parseResumeText, setParsedResumeText] = useState("");
 
   const renderActiveComponent = () => {
     switch (activeView) {
@@ -47,10 +48,10 @@ function Dashboard() {
         return <InterviewScheduler />;
 
       case "resume-uploader":
-        return <ResumeUploader />;
+        return <ResumeUploader setParsedResumeText={setParsedResumeText} />;
 
       case "resume-analysis":
-        return <ResumeParse />;
+        return <ResumeParse resumeText={parseResumeText} />;
 
       default:
         return <JobTracker />;

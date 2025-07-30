@@ -24,19 +24,8 @@
 import React, { useState, useEffect } from "react";
 import { db, storage } from "../firebase/firebase";
 import { useAuth } from "../contexts/AuthContext";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  deleteDoc,
-} from "firebase/firestore";
+import { ref, uploadBytes, deleteObject } from "firebase/storage";
+import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import "../styles/ResumeUploader.css";
 import ResumeParse from "./ResumeParse";
 
@@ -69,8 +58,17 @@ function ResumeUploader() {
     const fetchResumes = async () => {
       const resumeRef = collection(db, "users", currentUser.uid, "resumes");
       const snapshot = await getDocs(resumeRef);
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setResumes(data);
+      const data = snapshot.docs.map((doc) => {
+        const docData = doc.data();
+        return {
+          id: doc.id,
+          fileName: docData.fileName,
+          uploadedAt: docData.uploadedAt,
+          url: docData.url,
+          matchedSkills: docData.matchedSkills || "",
+        };
+      });
+      setResumes(() => [...data]);
     };
 
     fetchResumes();
@@ -91,21 +89,8 @@ function ResumeUploader() {
    */
   const handleUpload = async () => {
     if (!file || !currentUser) return;
-
     const storageRef = ref(storage, `resumes/${currentUser.uid}/${file.name}`);
     await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-
-    const metadata = {
-      fileName: file.name,
-      uploadedAt: new Date().toISOString(),
-      url: downloadURL,
-    };
-
-    const docRef = collection(db, "users", currentUser.uid, "resumes");
-    const addedDoc = await addDoc(docRef, metadata);
-    setResumes((prev) => [...prev, { id: addedDoc.id, ...metadata }]);
-
     setFile(null);
   };
 
@@ -128,11 +113,24 @@ function ResumeUploader() {
     const confirm = window.confirm("Delete this resume?");
     if (!confirm || !currentUser) return;
 
-    const fileRef = ref(storage, `resumes/${currentUser.uid}/${fileName}`);
-    await deleteObject(fileRef);
+    const storageRef = ref(storage, `resumes/${currentUser.uid}/${fileName}`);
+    const docRef = doc(db, "users", currentUser.uid, "resumes", resumeId);
 
-    await deleteDoc(doc(db, "users", currentUser.uid, "resumes", resumeId));
-    setResumes((prev) => prev.filter((r) => r.id !== resumeId));
+    try {
+      await deleteObject(storageRef);
+    } catch (err) {
+      console.warn(
+        "Storage file already missing or failed to delete:",
+        err.message
+      );
+    }
+
+    try {
+      await deleteDoc(docRef);
+      setResumes((prev) => prev.filter((r) => r.id !== resumeId));
+    } catch (err) {
+      console.error("Error deleting Firestore doc:", err);
+    }
   };
 
   return (
@@ -170,7 +168,8 @@ function ResumeUploader() {
 
       {selectedResume && (
         <ResumeParse
-          resumeText={`Simulated resume text for ${selectedResume.fileName}`}
+          key={selectedResume.id}
+          resumeText={selectedResume.matchedSkills}
         />
       )}
     </div>

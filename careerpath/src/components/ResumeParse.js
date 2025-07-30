@@ -25,7 +25,41 @@ import React, { useState, useEffect } from "react";
 import { db } from "../firebase/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
+import { deleteDoc, doc } from "firebase/firestore";
 import "../styles/ResumeAnalyzer.css";
+
+const KNOWN_SKILLS = [
+  "javascript",
+  "python",
+  "java",
+  "c++",
+  "react",
+  "firebase",
+  "node.js",
+  "html",
+  "css",
+  "sql",
+  "mongodb",
+  "typescript",
+  "aws",
+  "gcp",
+  "azure",
+  "docker",
+  "kubernetes",
+  "git",
+  "rest",
+  "graphql",
+  "express",
+  "sass",
+  "redux",
+  "flutter",
+  "dart",
+  "next.js",
+  "vite",
+  "bash",
+  "linux",
+  "nosql",
+];
 
 /**
  * ResumeParse()
@@ -54,6 +88,21 @@ function ResumeParse({ resumeText }) {
   const [analysis, setAnalysis] = useState(null);
   const [savedAnalyses, setSavedAnalyses] = useState([]);
   const { currentUser } = useAuth();
+
+  /**
+   * Auto-fills the qualifications textarea with extracted resume text
+   * whenever a new `resumeText` prop is passed to the component.
+   * This ensures the analyzer starts with the actual parsed content
+   * instead of requiring manual copy-paste.
+   */
+  useEffect(() => {
+    if (resumeText) {
+      const formatted = Array.isArray(resumeText)
+        ? resumeText.join(", ")
+        : resumeText;
+      setQualifications(formatted);
+    }
+  }, [resumeText]);
 
   /**
    * handleAnalyze()
@@ -85,6 +134,14 @@ function ResumeParse({ resumeText }) {
     });
 
     alert("Analysis saved!");
+  };
+
+  const handleDelete = async (id) => {
+    if (!currentUser) return;
+
+    await deleteDoc(doc(db, "users", currentUser.uid, "resumeAnalysis", id));
+
+    setSavedAnalyses((prev) => prev.filter((item) => item.id !== id));
   };
 
   /**
@@ -181,6 +238,16 @@ function ResumeParse({ resumeText }) {
                   </span>
                 ))}
               </div>
+              <button
+                onClick={() => {
+                  const confirmDelete = window.confirm(
+                    "Are you sure you want to delete this analysis?"
+                  );
+                  if (confirmDelete) handleDelete(item.id);
+                }}
+              >
+                🗑️ Delete
+              </button>
             </div>
           ))
         )}
@@ -188,6 +255,23 @@ function ResumeParse({ resumeText }) {
     </div>
   );
 }
+
+/**
+ * extractSkillsFromText()
+ *
+ * Scans a block of text and identifies known technical skills
+ * by checking for case-insensitive matches against a predefined list.
+ *
+ * Parameters:
+ * - text (string): The input text to analyze (e.g., resume or job description)
+ *
+ * Returns:
+ * - An array of recognized skills that are present in the text
+ */
+const extractSkillsFromText = (text) => {
+  const normalizedText = text.toLowerCase();
+  return KNOWN_SKILLS.filter((skill) => normalizedText.includes(skill));
+};
 
 /**
  * analyzeMatch()
@@ -206,15 +290,8 @@ function ResumeParse({ resumeText }) {
  * - matchRate: percentage string representing overlap (e.g., "67%")
  */
 const analyzeMatch = (qualifications, jobDescription) => {
-  const resumeSkills = qualifications
-    .split(",")
-    .map((skill) => skill.trim().toLowerCase())
-    .filter((skill) => skill.length > 0);
-
-  const jobSkills = jobDescription
-    .split(",")
-    .map((skill) => skill.trim().toLowerCase())
-    .filter((skill) => skill.length > 0);
+  const resumeSkills = extractSkillsFromText(qualifications);
+  const jobSkills = extractSkillsFromText(jobDescription);
 
   const matched = resumeSkills.filter((skill) => jobSkills.includes(skill));
 
@@ -225,9 +302,9 @@ const analyzeMatch = (qualifications, jobDescription) => {
 
   return {
     foundSkills: resumeSkills,
-    jobSkills: jobSkills,
-    matched: matched,
-    matchRate: matchRate,
+    jobSkills,
+    matched,
+    matchRate,
   };
 };
 
