@@ -25,7 +25,15 @@ import React, { useState, useEffect } from "react";
 import { db, storage } from "../firebase/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { ref, uploadBytes, deleteObject } from "firebase/storage";
-import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
+import { getDownloadURL } from "firebase/storage";
 import "../styles/ResumeUploader.css";
 import ResumeParse from "./ResumeParse";
 
@@ -44,6 +52,7 @@ function ResumeUploader() {
   const [file, setFile] = useState(null);
   const [resumes, setResumes] = useState([]);
   const [selectedResume, setSelectedResume] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   /**
    * Fetches uploaded resumes from Firestore when the current user is available.
@@ -55,23 +64,24 @@ function ResumeUploader() {
   useEffect(() => {
     if (!currentUser) return;
 
-    const fetchResumes = async () => {
-      const resumeRef = collection(db, "users", currentUser.uid, "resumes");
-      const snapshot = await getDocs(resumeRef);
-      const data = snapshot.docs.map((doc) => {
-        const docData = doc.data();
+    const resumeRef = collection(db, "users", currentUser.uid, "resumes");
+
+    const unsubscribe = onSnapshot(resumeRef, (snapshot) => {
+      const updated = snapshot.docs.map((doc) => {
+        const data = doc.data();
         return {
           id: doc.id,
-          fileName: docData.fileName,
-          uploadedAt: docData.uploadedAt,
-          url: docData.url,
-          matchedSkills: docData.matchedSkills || "",
+          fileName: data.fileName,
+          uploadedAt: data.uploadedAt,
+          url: data.url,
+          matchedSkills: data.matchedSkills || "",
         };
       });
-      setResumes(() => [...data]);
-    };
 
-    fetchResumes();
+      setResumes(updated);
+    });
+
+    return () => unsubscribe();
   }, [currentUser]);
 
   /**
@@ -89,9 +99,51 @@ function ResumeUploader() {
    */
   const handleUpload = async () => {
     if (!file || !currentUser) return;
-    const storageRef = ref(storage, `resumes/${currentUser.uid}/${file.name}`);
-    await uploadBytes(storageRef, file);
-    setFile(null);
+
+    setIsUploading(true);
+
+    try {
+      const storageRef = ref(
+        storage,
+        `resumes/${currentUser.uid}/${file.name}`
+      );
+      await uploadBytes(storageRef, file);
+
+      const downloadURL = await getDownloadURL(storageRef);
+
+      const resumeRef = collection(db, "users", currentUser.uid, "resumes");
+
+      let attempts = 0;
+      const maxAttempts = 10;
+      let resumeDetected = false;
+
+      while (attempts < maxAttempts && !resumeDetected) {
+        const snapshot = await getDocs(resumeRef);
+        const found = snapshot.docs.find(
+          (doc) => doc.data().fileName === file.name
+        );
+
+        if (found) {
+          const docRef = doc(resumeRef, found.id);
+
+          const currentData = found.data();
+          if (!currentData.url || currentData.url !== downloadURL) {
+            await updateDoc(docRef, { url: downloadURL });
+          }
+
+          resumeDetected = true;
+          break;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        attempts++;
+      }
+    } catch (error) {
+      console.error("Upload or resume detection failed:", error);
+    } finally {
+      setIsUploading(false);
+      setFile(null);
+    }
   };
 
   /**
@@ -141,6 +193,7 @@ function ResumeUploader() {
         accept=".pdf,.doc,.docx,.txt"
         onChange={(e) => setFile(e.target.files[0])}
       />
+      {isUploading && <p>Uploading resume...</p>}
       <button onClick={handleUpload} disabled={!file}>
         📤 Upload
       </button>
