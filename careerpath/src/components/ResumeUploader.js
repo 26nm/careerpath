@@ -22,6 +22,7 @@
  * May 21, 2025
  */
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { db, storage } from "../firebase/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { ref, uploadBytes, deleteObject } from "firebase/storage";
@@ -35,7 +36,7 @@ import {
 import { onSnapshot } from "firebase/firestore";
 import { getDownloadURL } from "firebase/storage";
 import "../styles/ResumeUploader.css";
-import ResumeParse from "./ResumeParse";
+// import ResumeParse from "./ResumeParse";
 
 /**
  * ResumeUploader()
@@ -51,8 +52,9 @@ function ResumeUploader() {
   const { currentUser } = useAuth();
   const [file, setFile] = useState(null);
   const [resumes, setResumes] = useState([]);
-  const [selectedResume, setSelectedResume] = useState(null);
+  // const [selectedResume, setSelectedResume] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const navigate = useNavigate();
 
   /**
    * Fetches uploaded resumes from Firestore when the current user is available.
@@ -211,20 +213,19 @@ function ResumeUploader() {
               <button onClick={() => handleDelete(resume.id, resume.fileName)}>
                 🗑 Delete
               </button>
-              <button onClick={() => setSelectedResume(resume)}>
+              <button
+                onClick={() => {
+                  navigate("/dashboard/resume-analysis", {
+                    state: { resumeText: resume.matchedSkills },
+                  });
+                }}
+              >
                 🧠 Analyze
               </button>
             </div>
           ))
         )}
       </div>
-
-      {selectedResume && (
-        <ResumeParse
-          key={selectedResume.id}
-          resumeText={selectedResume.matchedSkills}
-        />
-      )}
     </div>
   );
 }

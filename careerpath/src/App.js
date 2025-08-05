@@ -19,8 +19,12 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
+import DashboardLayout from "./components/DashboardLayout";
 import PrivateRoute from "./components/PrivateRoute";
+import JobTracker from "./components/JobTracker";
+import InterviewScheduler from "./components/InterviewScheduler";
+import ResumeUploader from "./components/ResumeUploader";
+import ResumeParse from "./components/ResumeParse";
 import "./App.css";
 
 /**
@@ -41,7 +45,23 @@ function App() {
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
+              <DashboardLayout />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<JobTracker />} />
+          <Route path="resume-uploader" element={<ResumeUploader />} />
+          <Route path="interview-scheduler" element={<InterviewScheduler />} />
+          <Route path="resume-analysis" element={<ResumeParse />} />
+        </Route>
+
+        <Route
+          path="/resume-analysis"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <ResumeParse />
+              </DashboardLayout>
             </PrivateRoute>
           }
         />

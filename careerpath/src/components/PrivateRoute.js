@@ -33,7 +33,9 @@ import { useAuth } from "../contexts/AuthContext";
  * @returns {JSX.Element} Either the child components or a redirect to the login route
  */
 function PrivateRoute({ children }) {
-  const { currentUser } = useAuth();
+  const { currentUser, loading } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
 
   return currentUser ? children : <Navigate to="/login" />;
 }

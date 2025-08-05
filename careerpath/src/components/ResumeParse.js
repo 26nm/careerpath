@@ -26,6 +26,7 @@ import { db } from "../firebase/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
 import { deleteDoc, doc } from "firebase/firestore";
+import { useLocation } from "react-router-dom";
 import "../styles/ResumeAnalyzer.css";
 
 const KNOWN_SKILLS = [
@@ -88,6 +89,8 @@ function ResumeParse({ resumeText }) {
   const [analysis, setAnalysis] = useState(null);
   const [savedAnalyses, setSavedAnalyses] = useState([]);
   const { currentUser } = useAuth();
+  const location = useLocation();
+  const resumeTextFromNav = location.state?.resumeText;
 
   /**
    * Auto-fills the qualifications textarea with extracted resume text
@@ -96,13 +99,15 @@ function ResumeParse({ resumeText }) {
    * instead of requiring manual copy-paste.
    */
   useEffect(() => {
-    if (resumeText) {
-      const formatted = Array.isArray(resumeText)
-        ? resumeText.join(", ")
-        : resumeText;
+    const textToUse = resumeText || resumeTextFromNav;
+
+    if (textToUse) {
+      const formatted = Array.isArray(textToUse)
+        ? textToUse.join(", ")
+        : textToUse;
       setQualifications(formatted);
     }
-  }, [resumeText]);
+  }, [resumeText, resumeTextFromNav]);
 
   /**
    * handleAnalyze()

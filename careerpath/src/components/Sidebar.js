@@ -24,9 +24,10 @@
  */
 import React from "react";
 import "../styles/Sidebar.css";
+import "../styles/AppLayout.css";
 import { auth } from "../firebase/firebase";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 
 import {
@@ -36,9 +37,11 @@ import {
   FaChartBar,
 } from "react-icons/fa";
 
-function Sidebar({ setActiveView, activeView }) {
+function Sidebar() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
 
   const handleLogout = async () => {
     try {
@@ -54,29 +57,29 @@ function Sidebar({ setActiveView, activeView }) {
       <h3>CareerPath</h3>
       <ul>
         <li
-          className={activeView === "job-tracker" ? "active" : ""}
-          onClick={() => setActiveView("job-tracker")}
+          className={isActive("/dashboard") ? "active" : ""}
+          onClick={() => navigate("/dashboard")}
         >
           <FaSuitcase style={{ marginRight: "8px" }} />
           JobTracker
         </li>
         <li
-          className={activeView === "interview-scheduler" ? "active" : ""}
-          onClick={() => setActiveView("interview-scheduler")}
+          className={isActive("/dashboard/interview-scheduler") ? "active" : ""}
+          onClick={() => navigate("/dashboard/interview-scheduler")}
         >
           <FaCalendarAlt style={{ marginRight: "8px " }} />
           Interviews
         </li>
         <li
-          className={activeView === "resume-uploader" ? "active" : ""}
-          onClick={() => setActiveView("resume-uploader")}
+          className={isActive("/dashboard/resume-uploader") ? "active" : ""}
+          onClick={() => navigate("/dashboard/resume-uploader")}
         >
           <FaFileUpload style={{ marginRight: "8px " }} />
           Resume Uploader
         </li>
         <li
-          className={activeView === "resume-analysis" ? "active" : ""}
-          onClick={() => setActiveView("resume-analysis")}
+          className={isActive("/dashboard/resume-analysis") ? "active" : ""}
+          onClick={() => navigate("/dashboard/resume-analysis")}
         >
           <FaChartBar style={{ marginRight: "8px " }} />
           Resume Analysis
