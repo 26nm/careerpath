@@ -1,3 +1,15 @@
+/**
+ * DashboardLayout.css
+ *
+ * Shared layout styles for dashboard pages.
+ * Provides a horizontal flex layout with a persistent sidebar
+ * and a main content area that adapts to nested routes.
+ *
+ * Nolan Dela Rosa
+ *
+ * August 4, 2025
+ */
+
 .dashboard-layout {
   display: flex;
 }
