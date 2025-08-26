@@ -60,6 +60,9 @@ function InterviewScheduler() {
   const [editDatetime, setEditDatetime] = useState("");
   const [editStatus, setEditStatus] = useState("Upcoming");
 
+  const [jobOptions, setJobOptions] = useState([]);
+  const [selectedJobId, setSelectedJobId] = useState(null);
+
   /**
    * useEffect — Fetch and auto-update interviews
    *
@@ -124,7 +127,35 @@ function InterviewScheduler() {
       data.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
       setInterviews(data);
     };
+
+    /**
+     * fetchJobs()
+     *
+     * Fetches the user's tracked job applications from Firestore to populate
+     * the job selection dropdown in the interview scheduling form.
+     *
+     * Steps:
+     * - Verify that the user is authenticated
+     * - Query the user's `applications` subcollection in Firestore
+     * - Map each document into a job object with an `id` and its data
+     * - Store the resulting job list in local state via `setJobOptions`
+     *
+     * Used to allow users to select an existing job and auto-fill interview details.
+     */
+    const fetchJobs = async () => {
+      if (!currentUser) return;
+      const appsRef = collection(db, "users", currentUser.uid, "applications");
+      const snapshot = await getDocs(appsRef);
+      const jobs = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setJobOptions(jobs);
+    };
+
     fetchInterviews();
+    fetchJobs();
   }, [currentUser]);
 
   /**
@@ -277,6 +308,29 @@ function InterviewScheduler() {
     <div className="interview-scheduler">
       <h3>Schedule an Interview</h3>
       <form onSubmit={handleAddInterview} className="job-form">
+        <div className="form-row">
+          <select
+            className="job-dropdown"
+            value={selectedJobId || ""}
+            onChange={(e) => {
+              const jobId = e.target.value;
+              setSelectedJobId(jobId);
+              const job = jobOptions.find((j) => j.id === jobId);
+              if (job) {
+                setCompany(job.company);
+                setPosition(job.position);
+              }
+            }}
+          >
+            <option value="">Select from tracked jobs (optional)</option>
+            {jobOptions.map((job) => (
+              <option key={job.id} value={job.id}>
+                {job.position} @ {job.company}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="form-row">
           <input
             type="text"
