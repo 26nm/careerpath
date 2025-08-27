@@ -106,9 +106,16 @@ function InterviewScheduler() {
 
       const data = snapshot.docs.map((docSnap) => {
         const data = docSnap.data();
-        const interviewDate = new Date(data.datetime);
+        const interviewDate =
+          data.datetime instanceof Date
+            ? data.datetime
+            : new Date(
+                data.datetime.toDate ? data.datetime.toDate() : data.datetime
+              );
 
-        if (interviewDate < now && data.status === "Upcoming") {
+        const isPastDue = interviewDate.getTime() < now.getTime();
+
+        if (isPastDue && data.status === "Upcoming") {
           updates.push(
             updateDoc(
               doc(db, "users", currentUser.uid, "interviews", docSnap.id),
@@ -175,11 +182,16 @@ function InterviewScheduler() {
     e.preventDefault();
     if (!currentUser || !position || !company || !datetime) return;
 
+    const now = new Date();
+    const interviewDate = new Date(datetime);
+    const computedStatus =
+      interviewDate.getTime() <= now.getTime() ? "Completed" : "Upcoming";
+
     const newInterview = {
       position,
       company,
       datetime,
-      status: "Upcoming",
+      status: computedStatus,
     };
 
     const ref = collection(db, "users", currentUser.uid, "interviews");
@@ -228,11 +240,17 @@ function InterviewScheduler() {
     if (!currentUser || !editingID) return;
 
     const docRef = doc(db, "users", currentUser.uid, "interviews", editingID);
+
+    const now = new Date();
+    const interviewDate = new Date(editDatetime);
+    const computedStatus =
+      interviewDate.getTime() <= now.getTime() ? "Completed" : "Upcoming";
+
     await updateDoc(docRef, {
       company: editCompany,
       position: editPosition,
       datetime: editDatetime,
-      status: editStatus,
+      status: computedStatus,
     });
 
     setInterviews((prev) => {
@@ -243,7 +261,7 @@ function InterviewScheduler() {
               company: editCompany,
               position: editPosition,
               datetime: editDatetime,
-              status: editStatus,
+              status: computedStatus,
             }
           : i
       );
