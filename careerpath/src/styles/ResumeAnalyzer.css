@@ -103,15 +103,28 @@
   color: #16a34a;
 }
 
+.skill-list {
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
 .skill-tag {
   display: inline-block;
-  background-color: #d1fae5;
-  color: #065f46;
-  padding: 0.3rem 0.6rem;
-  border-radius: 999px;
-  margin-right: 0.4rem;
-  margin-top: 0.4rem;
+  background-color: #eee;
+  padding: 4px 8px;
+  margin: 4px 6px 4px 0;
+  border-radius: 6px;
   font-size: 0.85rem;
+}
+
+.skill-tag.matched {
+  background-color: #d4f4dd;
+  color: #1a7f37;
+}
+
+.skill-tag.missing {
+  background-color: #ffe0e0;
+  color: #a30000;
 }
 
 .saved-analyses {
