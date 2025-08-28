@@ -48,6 +48,12 @@
   color: #1f2937;
 }
 
+.linked-job {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
 .job-form {
   display: flex;
   flex-direction: column;
@@ -124,6 +130,24 @@
   transition: transform 0.1s ease;
 }
 
+.interview-title {
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.interview-date {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-top: 0.25rem;
+}
+
+.linked-icon {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-left: 0.5rem;
+}
+
 .interview-card:hover {
   transform: scale(1.01);
 }
@@ -139,10 +163,6 @@
   margin-left: 6px;
 }
 
-.status-label {
-  margin-top: 0.5rem;
-}
-
 .status {
   display: inline-block;
   padding: 0.25rem 0.6rem;
@@ -151,19 +171,29 @@
   border-radius: 999px;
 }
 
-.status.upcoming {
-  background-color: #d1fae5;
-  color: #065f46;
+.status-line {
+  margin-top: 0.4rem;
 }
 
-.status.completed {
-  background-color: #e5e7eb;
-  color: #374151;
+.status-tag {
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: white;
+  margin-left: 0.3rem;
 }
 
-.status.canceled {
-  background-color: #fee2e2;
-  color: #991b1b;
+.status-tag.upcoming {
+  background-color: #10b981;
+}
+
+.status-tag.completed {
+  background-color: #6b7280;
+}
+
+.status-tag.canceled {
+  background-color: #ef4444;
 }
 
 .reminder-tag {
