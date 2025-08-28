@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /**
  * ResumeParse()
  *
@@ -28,39 +29,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useLocation } from "react-router-dom";
 import "../styles/ResumeAnalyzer.css";
-
-const KNOWN_SKILLS = [
-  "javascript",
-  "python",
-  "java",
-  "c++",
-  "react",
-  "firebase",
-  "node.js",
-  "html",
-  "css",
-  "sql",
-  "mongodb",
-  "typescript",
-  "aws",
-  "gcp",
-  "azure",
-  "docker",
-  "kubernetes",
-  "git",
-  "rest",
-  "graphql",
-  "express",
-  "sass",
-  "redux",
-  "flutter",
-  "dart",
-  "next.js",
-  "vite",
-  "bash",
-  "linux",
-  "nosql",
-];
 
 /**
  * ResumeParse()
@@ -204,19 +172,37 @@ function ResumeParse({ resumeText }) {
 
       {analysis && (
         <div className="analysis-result">
-          <h4>Analysis Result</h4>
           <div>
             <strong>Match Rate:</strong>{" "}
             <span className="match-score">{analysis.matchRate}</span>
           </div>
-          <div>
-            <strong>Matched Skills:</strong>
-            {analysis.matched.map((skill, idx) => (
-              <span key={idx} className="skill-tag">
-                {skill}
-              </span>
-            ))}
-          </div>
+
+          {analysis.matched.length > 0 && (
+            <div>
+              <strong>Matched Skills:</strong>
+              <div className="skill-list">
+                {analysis.matched.map((skill, idx) => (
+                  <span key={idx} className="skill-tag matched">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {analysis.missing.length > 0 && (
+            <div>
+              <strong>Missing Skills:</strong>
+              <div className="skill-list">
+                {analysis.missing.map((skill, idx) => (
+                  <span key={idx} className="skill-tag missing">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           <button onClick={handleSave}>💾 Save Analysis</button>
         </div>
       )}
@@ -262,23 +248,6 @@ function ResumeParse({ resumeText }) {
 }
 
 /**
- * extractSkillsFromText()
- *
- * Scans a block of text and identifies known technical skills
- * by checking for case-insensitive matches against a predefined list.
- *
- * Parameters:
- * - text (string): The input text to analyze (e.g., resume or job description)
- *
- * Returns:
- * - An array of recognized skills that are present in the text
- */
-const extractSkillsFromText = (text) => {
-  const normalizedText = text.toLowerCase();
-  return KNOWN_SKILLS.filter((skill) => normalizedText.includes(skill));
-};
-
-/**
  * analyzeMatch()
  *
  * Compares two comma-separated strings (resume qualifications and job description)
@@ -295,20 +264,75 @@ const extractSkillsFromText = (text) => {
  * - matchRate: percentage string representing overlap (e.g., "67%")
  */
 const analyzeMatch = (qualifications, jobDescription) => {
-  const resumeSkills = extractSkillsFromText(qualifications);
-  const jobSkills = extractSkillsFromText(jobDescription);
+  const tokenize = (text) =>
+    (text.toLowerCase().match(/\b[a-zA-Z0-9\.\+\#\-]{2,}\b/g) || []).filter(
+      (word) =>
+        ![
+          "and",
+          "the",
+          "you",
+          "are",
+          "with",
+          "have",
+          "for",
+          "our",
+          "your",
+          "that",
+          "will",
+          "in",
+          "to",
+          "of",
+          "a",
+          "on",
+          "at",
+          "by",
+          "an",
+          "as",
+          "be",
+          "is",
+          "we",
+          "they",
+          "this",
+          "it",
+          "looking",
+          "skilled",
+          "experience",
+          "required",
+          "preferred",
+          "manager",
+          "role",
+          "position",
+          "apply",
+          "please",
+          "must",
+          "include",
+          "job",
+          "work",
+          "team",
+          "tasks",
+          "perform",
+          "using",
+          "tools",
+        ].includes(word)
+    );
 
-  const matched = resumeSkills.filter((skill) => jobSkills.includes(skill));
+  const resumeTokens = tokenize(qualifications);
+  const jobTokens = tokenize(jobDescription);
+
+  const uniqueResume = [...new Set(resumeTokens)];
+  const uniqueJob = [...new Set(jobTokens)];
+
+  const matched = uniqueJob.filter((word) => uniqueResume.includes(word));
+  const missing = jobTokens.filter((word) => !resumeTokens.includes(word));
 
   const matchRate =
-    jobSkills.length > 0
-      ? ((matched.length / jobSkills.length) * 100).toFixed(0) + "%"
+    uniqueJob.length > 0
+      ? ((matched.length / uniqueJob.length) * 100).toFixed(0) + "%"
       : "0%";
 
   return {
-    foundSkills: resumeSkills,
-    jobSkills,
     matched,
+    missing,
     matchRate,
   };
 };
