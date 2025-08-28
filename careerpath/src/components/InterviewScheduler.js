@@ -192,6 +192,7 @@ function InterviewScheduler() {
       company,
       datetime,
       status: computedStatus,
+      linkedJobId: selectedJobId || null,
     };
 
     const ref = collection(db, "users", currentUser.uid, "interviews");
@@ -392,6 +393,9 @@ function InterviewScheduler() {
             minute: "2-digit",
           });
           const reminder = formatReminderTag(dateStr, timeStr);
+          const linkedJob = jobOptions.find(
+            (job) => job.id === interview.linkedJobId
+          );
 
           return (
             <div
@@ -434,23 +438,37 @@ function InterviewScheduler() {
                 </>
               ) : (
                 <>
-                  <strong>{interview.position}</strong>
-                  <div>{interview.company}</div>
-                  <em>
+                  <div className="interview-title">
+                    <strong>
+                      {interview.position} @ {interview.company}
+                    </strong>
+
+                    {linkedJob && (
+                      <span
+                        className="linked-icon"
+                        title="From Job Tracker"
+                      ></span>
+                    )}
+                  </div>
+
+                  <div className="interview-date">
                     Scheduled: {dateStr} at {timeStr}
                     {isToday(interview.datetime) && (
                       <span className="today-tag"> - Today</span>
                     )}
-                  </em>
-                  <div className="status-label">
-                    Status:{" "}
+                  </div>
+
+                  <div className="status-line">
+                    Status:
                     <span
-                      className={`status ${interview.status.toLowerCase()}`}
+                      className={`status-tag ${interview.status.toLowerCase()}`}
                     >
                       {interview.status}
                     </span>
                   </div>
+
                   {reminder && <div className="reminder-tag">{reminder}</div>}
+
                   <div className="button-group">
                     <button onClick={() => handleEdit(interview)}>
                       ✏️ Edit
