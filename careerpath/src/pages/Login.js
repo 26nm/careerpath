@@ -60,28 +60,33 @@ function Login() {
   };
 
   return (
-    <div className="auth-container">
-      <h2>Log In</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-      {error && <p className="auth-error">{error}</p>}
-      <div className="auth-footer">
-        Don't have an account? <Link to="/signup">Sign up</Link>
+    <div className="auth-outer">
+      <div className="auth-container">
+        <div className="auth-header">
+          <h1 className="auth-branding">CareerPath 🗺️</h1>
+          <p className="auth-tagline">Your career journey. All in one path.</p>
+        </div>
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit">Login</button>
+        </form>
+        {error && <p className="auth-error">{error}</p>}
+        <div className="auth-footer">
+          Don't have an account? <Link to="/signup">Sign up</Link>
+        </div>
       </div>
     </div>
   );

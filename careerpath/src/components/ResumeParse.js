@@ -23,11 +23,14 @@
  */
 
 import React, { useState, useEffect } from "react";
+import ignoreWords from "../utils/IgnoreWords";
+import normalizeText from "../utils/NormalizeText";
 import { db } from "../firebase/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useLocation } from "react-router-dom";
+import { getNGrams } from "../utils/NGramUtils";
 import "../styles/ResumeAnalyzer.css";
 
 /**
@@ -264,70 +267,36 @@ function ResumeParse({ resumeText }) {
  * - matchRate: percentage string representing overlap (e.g., "67%")
  */
 const analyzeMatch = (qualifications, jobDescription) => {
-  const tokenize = (text) =>
-    (text.toLowerCase().match(/\b[a-zA-Z0-9\.\+\#\-]{2,}\b/g) || []).filter(
-      (word) =>
-        ![
-          "and",
-          "the",
-          "you",
-          "are",
-          "with",
-          "have",
-          "for",
-          "our",
-          "your",
-          "that",
-          "will",
-          "in",
-          "to",
-          "of",
-          "a",
-          "on",
-          "at",
-          "by",
-          "an",
-          "as",
-          "be",
-          "is",
-          "we",
-          "they",
-          "this",
-          "it",
-          "looking",
-          "skilled",
-          "experience",
-          "required",
-          "preferred",
-          "manager",
-          "role",
-          "position",
-          "apply",
-          "please",
-          "must",
-          "include",
-          "job",
-          "work",
-          "team",
-          "tasks",
-          "perform",
-          "using",
-          "tools",
-        ].includes(word)
-    );
+  /**
+   * filterOutIgnored
+   *
+   * Filters out non-skill terms from a given array of words using the ignoreWords list.
+   * This is used to clean up both matched and missing skill lists by removing generic,
+   * non-technical, or filler terms (e.g., "candidate", "responsibilities", "preferred").
+   *
+   * @param {string[]} skills - Array of skill tokens to be filtered
+   * @returns {string[]} - Array with only relevant, non-ignored skill terms
+   */
+  const filterOutIgnored = (skills) => {
+    return skills.filter((word) => !ignoreWords.includes(word.toLowerCase()));
+  };
 
-  const resumeTokens = tokenize(qualifications);
-  const jobTokens = tokenize(jobDescription);
+  const extractSkills = (text) => {
+    const normalized = normalizeText(text);
+    const ngrams = getNGrams(normalized, [1]);
+    const filtered = filterOutIgnored(ngrams);
+    return [...new Set(filtered.map((w) => w.toLowerCase()))];
+  };
 
-  const uniqueResume = [...new Set(resumeTokens)];
-  const uniqueJob = [...new Set(jobTokens)];
+  const resumeSkills = extractSkills(qualifications);
+  const jobSkills = extractSkills(jobDescription);
 
-  const matched = uniqueJob.filter((word) => uniqueResume.includes(word));
-  const missing = jobTokens.filter((word) => !resumeTokens.includes(word));
+  const matched = jobSkills.filter((skill) => resumeSkills.includes(skill));
+  const missing = jobSkills.filter((skill) => !resumeSkills.includes(skill));
 
   const matchRate =
-    uniqueJob.length > 0
-      ? ((matched.length / uniqueJob.length) * 100).toFixed(0) + "%"
+    jobSkills.length > 0
+      ? `${Math.round((matched.length / jobSkills.length) * 100)}%`
       : "0%";
 
   return {
