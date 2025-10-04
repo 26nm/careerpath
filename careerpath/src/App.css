@@ -24,6 +24,14 @@
   color: white;
 }
 
+body, html {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2ff, #c7d2fe);
+  font-family: 'Inter', sans-serif;
+}
+
 .App-link {
   color: #61dafb;
 }

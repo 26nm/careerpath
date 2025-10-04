@@ -37,6 +37,20 @@ body {
   animation: fadeInUp 0.6s ease forwards;
 }
 
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-container input,
+.auth-container button {
+  width: 90%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .auth-branding {
   text-align: center;
   font-size: 2rem;

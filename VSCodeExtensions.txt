@@ -1,0 +1,7 @@
+Extensions:
+-ESLint
+-ES7+ React/Redux/
+-Prettier Code
+-React Native
+-Discord Presence
+-Discord Theme

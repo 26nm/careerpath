@@ -1,0 +1,20 @@
+# Core Formatting
+dbaeumer.vscode-ESLint
+esbenp.prettier-vscode
+
+# React / json
+dsznajder.es7-react-js-snippets
+formulahendry.auto-rename-tag
+formulahendry.auto-close-tag
+
+# Firebase
+toba.vsfire
+
+# Git / Productivity
+eamodio.GitLens
+streetsidesoftware.code-spell-checker
+mhutchie.git-graph
+
+# Misc
+icrawl.discord-vscode
+NionLee.discord-theme
