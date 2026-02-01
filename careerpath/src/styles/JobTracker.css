@@ -22,7 +22,8 @@
 /* Job Tracker Styles */
 /* JobTracker.css (Updated for visual polish) */
 .job-tracker {
-  max-width: 700px;
+  width: 100%;
+  max-width: 900px;
   margin: 2rem auto;
   background: #fff;
   padding: 2rem;
@@ -149,6 +150,12 @@
 
 .button-group button:hover {
   opacity: 0.9;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 @media (max-width: 600px) {

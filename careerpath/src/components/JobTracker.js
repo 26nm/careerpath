@@ -226,7 +226,7 @@ function JobTracker() {
 
   return (
     <div className="job-tracker">
-      <h3>Job Application Tracker</h3>
+      <h3>Job Application Tracker 💼</h3>
       <form onSubmit={handleAdd} className="job-form">
         <div className="form-row">
           <input

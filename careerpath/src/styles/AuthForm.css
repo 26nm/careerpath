@@ -23,32 +23,39 @@ body {
   background: linear-gradient(to bottom right, #eef2ff, #c7d2fe);
   font-family: "Inter", sans-serif;
   margin: 0;
-  padding: 0;
   min-height: 100vh;
 }
 
+.auth-outer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
 .auth-container {
-  max-width: 400px;
-  margin: 8rem auto;
+  width: 100%;
+  max-width: 420px;
   padding: 2rem;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.85);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   border-radius: 16px;
   animation: fadeInUp 0.6s ease forwards;
 }
 
 .auth-container form {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .auth-container input,
 .auth-container button {
-  width: 90%;
-  max-width: 320px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .auth-branding {

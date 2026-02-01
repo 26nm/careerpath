@@ -54,7 +54,7 @@ function Sidebar() {
 
   return (
     <div className="sidebar">
-      <h3>CareerPath</h3>
+      <h3>CareerPath 🗺️</h3>
       <ul>
         <li
           className={isActive("/dashboard") ? "active" : ""}

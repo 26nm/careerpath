@@ -147,7 +147,7 @@ function ResumeParse({ resumeText }) {
 
   return (
     <div className="resume-parser">
-      <h3>Resume Analyzer</h3>
+      <h3>Resume Analysis 📊</h3>
 
       <div className="input-section">
         <div className="input-block">

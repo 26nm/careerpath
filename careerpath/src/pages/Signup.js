@@ -64,8 +64,10 @@ function Signup() {
   };
 
   return (
+    <div className = "auth-outer">
     <div className="auth-container">
-      <h2>Sign Up</h2>
+      <h2 className="auth-branding">Sign Up 👤</h2>
+      <p className="auth-tagline"> Your career journey starts here.</p>
       <form onSubmit={handleSignup}>
         <input
           type="email"
@@ -87,6 +89,7 @@ function Signup() {
       <div className="auth-footer">
         Already have an account? <Link to="/login">Log in</Link>
       </div>
+    </div>
     </div>
   );
 }

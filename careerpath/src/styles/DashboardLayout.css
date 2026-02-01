@@ -12,9 +12,14 @@
 
 .dashboard-layout {
   display: flex;
+  min-height: auto;
 }
 
 .main-content {
   flex-grow: 1;
-  padding: 1rem;
+  padding: 2rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }

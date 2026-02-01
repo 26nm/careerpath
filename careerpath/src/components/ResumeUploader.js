@@ -189,7 +189,7 @@ function ResumeUploader() {
 
   return (
     <div className="resume-uploader">
-      <h3>Upload Resume</h3>
+      <h3>Upload Resume 📄</h3>
       <input
         type="file"
         accept=".pdf,.doc,.docx,.txt"

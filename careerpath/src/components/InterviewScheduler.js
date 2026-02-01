@@ -325,7 +325,7 @@ function InterviewScheduler() {
 
   return (
     <div className="interview-scheduler">
-      <h3>Schedule an Interview</h3>
+      <h3>Schedule an Interview 🗓️</h3>
       <form onSubmit={handleAddInterview} className="job-form">
         <div className="form-row">
           <select
