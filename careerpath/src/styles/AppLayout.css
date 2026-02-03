@@ -76,7 +76,6 @@ button:hover {
   color: #666;
 }
 
-.job-tracker,
 .interview-scheduler {
   flex: 1 1 300px;
   max-width: 500px;
@@ -86,12 +85,6 @@ button:hover {
 .job-tracker .job-form select {
   flex: 1 1 150px;
   min-width: 0;
-}
-
-.job-tracker,
-job-form button {
-  flex-shrink: 0;
-  height: 100%;
 }
 
 .job-form .form-row {

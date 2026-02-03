@@ -23,12 +23,10 @@
 /* JobTracker.css (Updated for visual polish) */
 .job-tracker {
   width: 100%;
-  max-width: 900px;
-  margin: 2rem auto;
   background: #fff;
-  padding: 2rem;
+  padding: 1.25rem;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  flex-grow: 1;
 }
 
 .job-tracker h3 {
@@ -49,7 +47,7 @@
   background: #f9fafb;
   padding: 1.25rem;
   border-radius: 10px;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .job-form input,
@@ -98,7 +96,7 @@
   gap: 2rem;
 
   background: #f9fafb;
-  padding: 1.25rem 1.5rem;
+  padding: 0.8rem 1.1rem;
   border-radius: 10px;
   border-left: 5px solid #4f46e5;
 
@@ -155,7 +153,7 @@
 
 .status-tag {
   display: inline-block;
-  padding: 0.3rem 0.6rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-size: 0.85rem;
   font-weight: 600;
