@@ -45,6 +45,13 @@
   margin-bottom: 1.5rem;
 }
 
+.job-form-container {
+  background: #f9fafb;
+  padding: 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
 .job-form input,
 .job-form select,
 .job-form button {
@@ -74,13 +81,28 @@
   gap: 1rem;
 }
 
+.application-section {
+  margin-top: 0.5rem;
+}
+
+.app-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
 .app-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+
   background: #f9fafb;
-  padding: 1rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 10px;
   border-left: 5px solid #4f46e5;
+
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-  transition: transform 0.1s ease;
 }
 
 .app-card:hover {
@@ -98,6 +120,37 @@
   font-size: 0.95rem;
   color: #4b5563;
   margin-bottom: 0.5rem;
+}
+
+.app-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.app-info strong {
+  font-size: 1.05rem;
+  color: #111827;
+}
+
+.edit-btn {
+  background: #e0e7ff;
+  color: #3730a3;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .status-tag {
@@ -156,6 +209,25 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.empty-state p {
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+  color: #374151;
+}
+
+.empty-state span {
+  display: block;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 600px) {
