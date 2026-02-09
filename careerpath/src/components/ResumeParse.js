@@ -23,14 +23,12 @@
  */
 
 import React, { useState, useEffect } from "react";
-import ignoreWords from "../utils/IgnoreWords";
-import normalizeText from "../utils/NormalizeText";
+import { extractSkillSignals } from "../utils/SkillExtractor";
 import { db } from "../firebase/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useLocation } from "react-router-dom";
-import { getNGrams } from "../utils/NGramUtils";
 import "../styles/ResumeAnalyzer.css";
 
 /**
@@ -88,8 +86,30 @@ function ResumeParse({ resumeText }) {
    * component state with the result.
    */
   const handleAnalyze = () => {
-    const result = analyzeMatch(qualifications, jobDescription);
-    setAnalysis(result);
+    const { matched } = extractSkillSignals(qualifications, jobDescription);
+
+    const jobSkills = extractSkillSignals(
+      jobDescription,
+      jobDescription,
+    ).matched.map((s) => s.skill);
+
+    const uniqueJobSkills = Array.from(new Set(jobSkills));
+
+    const matchedSkills = matched.map((m) => m.skill);
+    const missing = uniqueJobSkills.filter(
+      (skill) => !matchedSkills.includes(skill),
+    );
+
+    const matchRate =
+      uniqueJobSkills.length > 0
+        ? `${Math.round((matchedSkills.length / uniqueJobSkills.length) * 100)}%`
+        : "0%";
+
+    setAnalysis({
+      matched: matchedSkills,
+      missing,
+      matchRate,
+    });
   };
 
   /**
@@ -135,7 +155,7 @@ function ResumeParse({ resumeText }) {
         db,
         "users",
         currentUser.uid,
-        "resumeAnalysis"
+        "resumeAnalysis",
       );
       const snapshot = await getDocs(analysisRef);
       const saved = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -235,7 +255,7 @@ function ResumeParse({ resumeText }) {
               <button
                 onClick={() => {
                   const confirmDelete = window.confirm(
-                    "Are you sure you want to delete this analysis?"
+                    "Are you sure you want to delete this analysis?",
                   );
                   if (confirmDelete) handleDelete(item.id);
                 }}
@@ -249,61 +269,5 @@ function ResumeParse({ resumeText }) {
     </div>
   );
 }
-
-/**
- * analyzeMatch()
- *
- * Compares two comma-separated strings (resume qualifications and job description)
- * to determine which skills overlap and calculates a match percentage.
- *
- * Parameters:
- * - qualifications: string of resume skills (e.g., "JavaScript, React, Firebase")
- * - jobDescription: string of desired job skills (e.g., "React, Node.js, CSS")
- *
- * Returns:
- * - foundSkills: parsed and normalized skills from the resume
- * - jobSkills: parsed and normalized skills from the job description
- * - matched: array of skills present in both lists
- * - matchRate: percentage string representing overlap (e.g., "67%")
- */
-const analyzeMatch = (qualifications, jobDescription) => {
-  /**
-   * filterOutIgnored
-   *
-   * Filters out non-skill terms from a given array of words using the ignoreWords list.
-   * This is used to clean up both matched and missing skill lists by removing generic,
-   * non-technical, or filler terms (e.g., "candidate", "responsibilities", "preferred").
-   *
-   * @param {string[]} skills - Array of skill tokens to be filtered
-   * @returns {string[]} - Array with only relevant, non-ignored skill terms
-   */
-  const filterOutIgnored = (skills) => {
-    return skills.filter((word) => !ignoreWords.includes(word.toLowerCase()));
-  };
-
-  const extractSkills = (text) => {
-    const normalized = normalizeText(text);
-    const ngrams = getNGrams(normalized, [1]);
-    const filtered = filterOutIgnored(ngrams);
-    return [...new Set(filtered.map((w) => w.toLowerCase()))];
-  };
-
-  const resumeSkills = extractSkills(qualifications);
-  const jobSkills = extractSkills(jobDescription);
-
-  const matched = jobSkills.filter((skill) => resumeSkills.includes(skill));
-  const missing = jobSkills.filter((skill) => !resumeSkills.includes(skill));
-
-  const matchRate =
-    jobSkills.length > 0
-      ? `${Math.round((matched.length / jobSkills.length) * 100)}%`
-      : "0%";
-
-  return {
-    matched,
-    missing,
-    matchRate,
-  };
-};
 
 export default ResumeParse;
