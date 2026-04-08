@@ -91,19 +91,39 @@ function ResumeParse({ resumeText }) {
 
     const jobSkills = extractTerms(jobDescription);
     const uniqueJobSkills = Array.from(new Set(jobSkills));
-
     const matchedSkills = matched.map((m) => m.skill);
-    const missing = uniqueJobSkills.filter(
-      (skill) => !matchedSkills.includes(skill),
+
+    const LOW_SIGNAL = new Set([
+      "software",
+      "data",
+      "development",
+      "services",
+      "system",
+      "life",
+      "cycle",
+      "applications",
+      "building",
+    ]);
+
+    const filteredJobSkills = uniqueJobSkills.filter(
+      (skill) => !LOW_SIGNAL.has(skill),
+    );
+
+    const filteredMatchedSkills = matchedSkills.filter(
+      (skill) => !LOW_SIGNAL.has(skill),
+    );
+
+    const missing = filteredJobSkills.filter(
+      (skill) => !filteredMatchedSkills.includes(skill),
     );
 
     const matchRate =
-      uniqueJobSkills.length > 0
-        ? `${Math.round((matchedSkills.length / uniqueJobSkills.length) * 100)}%`
+      filteredJobSkills.length > 0
+        ? `${Math.round((filteredMatchedSkills.length / filteredJobSkills.length) * 100)}%`
         : "0%";
 
     setAnalysis({
-      matched: matchedSkills,
+      matched: filteredMatchedSkills,
       missing,
       matchRate,
     });

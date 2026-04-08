@@ -102,6 +102,15 @@ function extractMeaningfulTerms(text) {
     "seeking",
     "plus",
     "expected",
+    "hiring",
+    "should",
+    "developing",
+    "familiarity",
+    "methodologies",
+    "problem",
+    "solving",
+    "platforms",
+    "such",
   ]);
 
   const tokens = doc.terms().out("array");
