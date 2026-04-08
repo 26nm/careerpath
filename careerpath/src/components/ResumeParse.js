@@ -24,6 +24,7 @@
 
 import React, { useState, useEffect } from "react";
 import { extractSkillSignals } from "../utils/SkillExtractor";
+import { extractTerms } from "../utils/SkillExtractor";
 import { db } from "../firebase/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
@@ -88,11 +89,7 @@ function ResumeParse({ resumeText }) {
   const handleAnalyze = () => {
     const { matched } = extractSkillSignals(qualifications, jobDescription);
 
-    const jobSkills = extractSkillSignals(
-      jobDescription,
-      jobDescription,
-    ).matched.map((s) => s.skill);
-
+    const jobSkills = extractTerms(jobDescription);
     const uniqueJobSkills = Array.from(new Set(jobSkills));
 
     const matchedSkills = matched.map((m) => m.skill);

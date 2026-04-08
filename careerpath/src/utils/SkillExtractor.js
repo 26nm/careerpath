@@ -34,8 +34,42 @@
  * February 9, 2026
  */
 import normalizeText from "./NormalizeText";
-import { getNGrams } from "./NGramUtils";
-import IGNORE_WORDS from "./IgnoreWords";
+import nlp from "compromise";
+
+function extractMeaningfulTerms(text) {
+  const normalized = normalizeText(text);
+  const doc = nlp(normalized);
+
+  const COMMON = new Set([
+    "the",
+    "and",
+    "for",
+    "with",
+    "this",
+    "that",
+    "candidate",
+    "experience",
+    "engineer",
+    "role",
+  ]);
+
+  const tokens = doc.terms().out("array");
+
+  // normalize + clean
+  return tokens
+    .flatMap((term) => term.split(" "))
+    .map((t) =>
+      t
+        .toLowerCase()
+        .replace(/[^\w+#]/g, "")
+        .trim(),
+    )
+    .filter((t) => t.length > 2 && !COMMON.has(t));
+}
+
+export function extractTerms(text) {
+  return extractMeaningfulTerms(text);
+}
 
 /**
  * extractSkillSignals
@@ -83,38 +117,18 @@ export function extractSkillSignals(resumeText, jobText) {
   const resume = normalizeText(resumeText);
   const job = normalizeText(jobText);
 
-  const resumeSkills = getNGrams(resume, [1]);
-  const jobSkills = getNGrams(job, [1]);
-
-  const resumePhrases = getNGrams(resume, [2, 3]);
-  const jobPhrases = getNGrams(job, [1]);
+  const resumeSkills = extractMeaningfulTerms(resume);
+  const jobSkills = extractMeaningfulTerms(job);
 
   const scores = {};
+  const jobSet = new Set(jobSkills);
 
-  // Score overlap
+  // Score unigram matches
   resumeSkills.forEach((skill) => {
-    if (!jobSkills.includes(skill)) return;
+    if (!jobSet.has(skill)) return;
 
     if (!scores[skill]) scores[skill] = 0;
     scores[skill] += 2;
-  });
-
-  resumePhrases.forEach((phrase) => {
-    if (!jobPhrases.includes(phrase)) return;
-
-    const words = phrase.split(" ");
-
-    words.forEach((word) => {
-      if (!scores[word]) return;
-      scores[word] += 1;
-    });
-  });
-
-  // Penalize ignored terms
-  Object.keys(scores).forEach((token) => {
-    if (IGNORE_WORDS.includes(token)) {
-      scores[token] -= 3;
-    }
   });
 
   // Filter low-signal junk
