@@ -88,6 +88,20 @@ function extractMeaningfulTerms(text) {
     "experience",
     "engineer",
     "role",
+    "are",
+    "has",
+    "have",
+    "working",
+    "required",
+    "preferred",
+    "strong",
+    "skills",
+    "knowledge",
+    "understanding",
+    "ideal",
+    "seeking",
+    "plus",
+    "expected",
   ]);
 
   const tokens = doc.terms().out("array");
