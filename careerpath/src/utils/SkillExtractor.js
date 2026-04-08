@@ -36,6 +36,43 @@
 import normalizeText from "./NormalizeText";
 import nlp from "compromise";
 
+/**
+ * extractMeaningfulTerms
+ *
+ * Extracts normalized, meaningful tokens from raw text input for use in
+ * resume-to-job matching. This function is designed to produce consistent,
+ * comparable tokens across both resume and job description inputs.
+ *
+ * Processing steps:
+ * 1. Normalize input text (via normalizeText) to standardize casing,
+ *    spacing, and punctuation.
+ * 2. Use compromise NLP to tokenize the text into individual terms.
+ *    (Uses `terms()` instead of `nouns()` to avoid phrase-level grouping.)
+ * 3. Split any remaining compound terms into individual tokens.
+ * 4. Normalize each token by:
+ *    - converting to lowercase
+ *    - stripping punctuation and special characters
+ *    - trimming whitespace
+ * 5. Filter out low-signal tokens such as common filler words
+ *    (e.g., "the", "and", "experience") using a predefined exclusion set.
+ * 6. Remove very short tokens (length ≤ 2) to reduce noise.
+ *
+ * Design goals:
+ * - Ensure consistent token format between resume and job description
+ * - Avoid phrase-based mismatches (e.g., "experience in react")
+ * - Maintain field-agnostic behavior (no hardcoded skill lists)
+ * - Provide a clean input for deterministic scoring logic
+ *
+ * Returns:
+ * - Array<string>: cleaned, normalized tokens representing meaningful terms
+ *
+ * Example:
+ * Input:
+ *   "Experience in React, Node.js, and AWS."
+ *
+ * Output:
+ *   ["react", "nodejs", "aws"]
+ */
 function extractMeaningfulTerms(text) {
   const normalized = normalizeText(text);
   const doc = nlp(normalized);
@@ -67,6 +104,27 @@ function extractMeaningfulTerms(text) {
     .filter((t) => t.length > 2 && !COMMON.has(t));
 }
 
+/**
+ * extractTerms
+ *
+ * Public-facing wrapper around `extractMeaningfulTerms` used by other parts
+ * of the application (e.g., ResumeParse) to retrieve normalized tokens.
+ *
+ * Purpose:
+ * - Provides a stable, reusable interface for term extraction
+ * - Decouples external components from the internal implementation details
+ *   of `extractMeaningfulTerms`
+ * - Allows future changes to the extraction pipeline (e.g., adding phrase
+ *   handling or AI-based normalization) without modifying all callers
+ *
+ * Design rationale:
+ * - Keeps extraction logic centralized in one place
+ * - Prevents tight coupling between UI components and NLP internals
+ * - Supports scalability and maintainability as the analyzer evolves
+ *
+ * @param {string} text - Raw input text (resume or job description)
+ * @returns {string[]} Array of cleaned, normalized tokens
+ */
 export function extractTerms(text) {
   return extractMeaningfulTerms(text);
 }
