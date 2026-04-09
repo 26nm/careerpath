@@ -1,0 +1,129 @@
+/**
+ * HomePage Styles
+ *
+ * Defines the layout and visual styling for the CareerPath landing page.
+ * This stylesheet is responsible for structuring the hero section,
+ * call-to-action buttons, and feature cards, as well as adding visual
+ * depth and interactivity through spacing, shadows, and hover effects.
+ *
+ * Sections:
+ * - .homepage:
+ *   Main container that centers content and applies global padding.
+ *
+ * - .hero:
+ *   Top section containing the app title, description, and action buttons.
+ *   Uses vertical spacing to separate it from the rest of the page.
+ *
+ * - .hero h1 / .hero p:
+ *   Typography styling for the main heading and supporting text,
+ *   including font sizing, color, and width constraints for readability.
+ *
+ * - .hero-buttons:
+ *   Container for primary actions (Get Started, Log In).
+ *   Uses a vertical flex layout with spacing for clear hierarchy.
+ *
+ * - .features:
+ *   Layout container for feature cards.
+ *   Uses flexbox with wrapping and spacing to support responsive layouts.
+ *
+ * - .feature-card:
+ *   Individual feature blocks highlighting key app functionality.
+ *   Styled with background color, rounded corners, shadows, and borders
+ *   to create a "card" effect with visual separation from the background.
+ *
+ * - .feature-card:hover:
+ *   Adds interactivity by lifting the card and increasing shadow depth
+ *   on hover, creating a more dynamic and modern UI feel.
+ *
+ * - .get-started / .login:
+ *   Button variants to establish visual hierarchy:
+ *   - Get Started: primary action (solid color)
+ *   - Log In: secondary action (outlined style)
+ *
+ * - button / button:hover:
+ *   Global button transitions and scaling effects for smoother interaction feedback.
+ *
+ * Design Intent:
+ * - Maintain a clean, centered layout with clear visual hierarchy
+ * - Emphasize primary actions and key features
+ * - Introduce depth through shadows and motion
+ * - Keep styling minimal while enhancing usability and readability
+ */
+.homepage {
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero {
+  margin-top: 80px;
+  margin-bottom: 40px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.hero-buttons {
+  margin: 0 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 4rem;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 250px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.feature-card h3 {
+  font-weight: 600;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.get-started {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.login {
+  background-color: white;
+  border: 1px solid #4f46e5;
+  color: #4f46e5;
+}
+
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}

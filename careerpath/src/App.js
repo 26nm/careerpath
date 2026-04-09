@@ -17,6 +17,7 @@
  */
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import DashboardLayout from "./components/DashboardLayout";
@@ -39,6 +40,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route
@@ -57,15 +59,9 @@ function App() {
 
         <Route
           path="/resume-analysis"
-          element={
-            <PrivateRoute>
-              <DashboardLayout>
-                <ResumeParse />
-              </DashboardLayout>
-            </PrivateRoute>
-          }
+          element={<Navigate to="/dashboard/resume-analysis" replace />}
         />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
   );
