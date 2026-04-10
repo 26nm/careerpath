@@ -90,6 +90,8 @@ function Login() {
         {error && <p className="auth-error">{error}</p>}
         <div className="auth-footer">
           Don't have an account? <Link to="/signup">Sign up</Link>
+          <br />
+          <Link to="/"> ← Back to Home</Link>
         </div>
       </div>
     </div>
