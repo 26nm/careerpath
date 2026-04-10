@@ -113,7 +113,8 @@ button:hover {
     width: 100%;
   }
 }
-*/ .dashboard-grid {
+
+.dashboard-grid {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;

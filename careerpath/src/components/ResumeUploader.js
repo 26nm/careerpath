@@ -77,7 +77,7 @@ function ResumeUploader() {
           fileName: data.fileName,
           uploadedAt: data.uploadedAt,
           url: data.url,
-          matchedSkills: data.matchedSkills || "",
+          matchedSkills: data.matchedSkills || [],
         };
       });
 
@@ -86,6 +86,25 @@ function ResumeUploader() {
 
     return () => unsubscribe();
   }, [currentUser]);
+
+  const waitForProcessedResume = async (userId) => {
+    for (let i = 0; i < 10; i++) {
+      const snapshot = await getDocs(
+        collection(db, "users", userId, "resumes"),
+      );
+
+      const resumes = snapshot.docs.map((doc) => doc.data());
+      const latest = resumes[resumes.length - 1];
+
+      if (latest?.extractedSkills?.length > 0) {
+        return latest;
+      }
+
+      await new Promise((res) => setTimeout(res, 1000));
+    }
+
+    return null;
+  };
 
   /**
    * handleUpload()
@@ -224,9 +243,17 @@ function ResumeUploader() {
               </button>
               <button
                 className="analyze-btn"
-                onClick={() => {
+                onClick={async () => {
+                  const processedResume = await waitForProcessedResume(
+                    currentUser.uid,
+                  );
+                  if (!processedResume) {
+                    console.error("Resume not ready yet.");
+                    return;
+                  }
+
                   navigate("/dashboard/resume-analysis", {
-                    state: { resumeText: resume.matchedSkills },
+                    state: { resumeText: processedResume.resumeText },
                   });
                 }}
               >

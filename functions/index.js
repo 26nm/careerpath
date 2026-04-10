@@ -40,6 +40,45 @@ const ignoreWords = require("./utils/IgnoreWords");
 admin.initializeApp();
 const gcs = new Storage();
 
+// convert once -> fast lookups
+const ignoreSet = new Set(ignoreWords);
+
+// normalize ignore words (adapted from NormalizeText.js)
+const normalizeText = (text) => {
+  return text
+    .toLowerCase()
+    .replace(/node\.?js/g, "nodejs")
+    .replace(/react\.?js/g, "react")
+    .replace(/vue\.?js/g, "vue")
+    .replace(/angular\.?js/g, "angular")
+    .replace(/restful api(s)?/g, "rest api")
+    .replace(/rest api(s)?/g, "rest api")
+    .replace(/ci\/cd|ci cd|ci-cd/g, "cicd")
+    .replace(/google cloud platform/g, "gcp")
+    .replace(/amazon web services|aws cloud/g, "aws")
+    .replace(/tailwind css/g, "tailwind")
+    .replace(/html5/g, "html")
+    .replace(/css3/g, "css")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+// extract meaningful keywords
+const extractKeywords = (text) => {
+  const normalized = normalizeText(text);
+  const tokens = normalized.split(" ");
+
+  return tokens
+    .map((word) => word.replace(/[^\w+#]/g, "").trim())
+    .filter(
+      (word, idx) =>
+        word.length > 2 &&
+        !ignoreSet.has(word) &&
+        tokens.indexOf(word) == idx &&
+        !/\d/.test(word),
+    );
+};
+
 exports.parseResumeText = onObjectFinalized(async (event) => {
   const object = event.data;
   const filePath = object.name;
@@ -75,20 +114,8 @@ exports.parseResumeText = onObjectFinalized(async (event) => {
       return;
     }
 
-    const lowerText = extractedText.toLowerCase();
-
-    const extractKeywordsFromText = (text) => {
-      const rawTokens = text.match(/\b[a-zA-Z0-9\.\+\#\-]{2,}\b/g) || [];
-
-      const keywords = rawTokens.filter(
-        (word, idx) =>
-          !ignoreWords.includes(word) && rawTokens.indexOf(word) === idx
-      );
-
-      return keywords;
-    };
-
-    const extractedSkills = extractKeywordsFromText(lowerText);
+    // improved extraction
+    const extractedSkills = extractKeywords(extractedText);
 
     const userId = filePath.split("/")[1];
     const dbRef = admin
