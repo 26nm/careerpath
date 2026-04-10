@@ -24,6 +24,7 @@
 .job-tracker {
   width: 100%;
   background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   padding: 1.25rem;
   border-radius: 12px;
   flex-grow: 1;
@@ -44,7 +45,7 @@
 }
 
 .job-form-container {
-  background: #f9fafb;
+  background: #f3f4f6;
   padding: 1.25rem;
   border-radius: 10px;
   margin-bottom: 1rem;
@@ -62,7 +63,8 @@
 }
 
 .job-form button {
-  background-color: #4f46e5;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
   color: white;
   font-weight: bold;
   cursor: pointer;
@@ -71,6 +73,7 @@
 
 .job-form button:hover {
   background-color: #4338ca;
+  transform: translateY(-1px);
 }
 
 .application-list {
@@ -100,11 +103,11 @@
   border-radius: 10px;
   border-left: 5px solid #4f46e5;
 
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .app-card:hover {
-  transform: scale(1.01);
+  transform: translateY(-3px);
 }
 
 .app-card strong {
@@ -141,6 +144,14 @@
   cursor: pointer;
 }
 
+.edit-btn:hover {
+  background: #c7d2fe;
+}
+
+.button-group button:hover {
+  transform: translateY(-1px);
+}
+
 .delete-btn {
   background: #fee2e2;
   color: #b91c1c;
@@ -149,6 +160,10 @@
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
 }
 
 .status-tag {
@@ -199,10 +214,6 @@
   font-weight: bold;
 }
 
-.button-group button:hover {
-  opacity: 0.9;
-}
-
 .form-row {
   display: flex;
   flex-wrap: wrap;
@@ -226,6 +237,40 @@
 .empty-state span {
   display: block;
   font-size: 0.9rem;
+}
+
+.save-btn {
+  background: #10b981;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cancel-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.cancel-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.button-group button,
+.app-actions button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 @media (max-width: 600px) {

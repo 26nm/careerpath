@@ -158,3 +158,22 @@
   border-radius: 8px;
   text-align: center;
 }
+
+.label-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

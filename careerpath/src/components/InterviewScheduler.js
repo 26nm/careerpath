@@ -15,6 +15,13 @@
  * Date: May 18, 2025
  */
 import React, { useState, useEffect } from "react";
+import {
+  FaSave,
+  FaTimes,
+  FaEdit,
+  FaTrash,
+  FaCalendarAlt,
+} from "react-icons/fa";
 import { collection, doc, addDoc, getDocs } from "firebase/firestore";
 import { updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
@@ -97,7 +104,7 @@ function InterviewScheduler() {
         db,
         "users",
         currentUser.uid,
-        "interviews"
+        "interviews",
       );
       const snapshot = await getDocs(interviewsRef);
 
@@ -110,7 +117,7 @@ function InterviewScheduler() {
           data.datetime instanceof Date
             ? data.datetime
             : new Date(
-                data.datetime.toDate ? data.datetime.toDate() : data.datetime
+                data.datetime.toDate ? data.datetime.toDate() : data.datetime,
               );
 
         const isPastDue = interviewDate.getTime() < now.getTime();
@@ -121,8 +128,8 @@ function InterviewScheduler() {
               doc(db, "users", currentUser.uid, "interviews", docSnap.id),
               {
                 status: "Completed",
-              }
-            )
+              },
+            ),
           );
           return { id: docSnap.id, ...data, status: "Completed" };
         }
@@ -205,7 +212,7 @@ function InterviewScheduler() {
     setInterviews((prev) => {
       const updated = [...prev, { id: docRef.id, ...newInterview }];
       return updated.sort(
-        (a, b) => new Date(a.datetime) - new Date(b.datetime)
+        (a, b) => new Date(a.datetime) - new Date(b.datetime),
       );
     });
   };
@@ -264,10 +271,10 @@ function InterviewScheduler() {
               datetime: editDatetime,
               status: computedStatus,
             }
-          : i
+          : i,
       );
       return updated.sort(
-        (a, b) => new Date(a.datetime) - new Date(b.datetime)
+        (a, b) => new Date(a.datetime) - new Date(b.datetime),
       );
     });
 
@@ -292,7 +299,7 @@ function InterviewScheduler() {
    */
   const handleDelete = async (id) => {
     const confirm = window.confirm(
-      "Are you sure you want to delete this interview?"
+      "Are you sure you want to delete this interview?",
     );
     if (!confirm || !currentUser) return;
 
@@ -325,7 +332,10 @@ function InterviewScheduler() {
 
   return (
     <div className="interview-scheduler">
-      <h3>Schedule an Interview 🗓️</h3>
+      <h3 className="section-title">
+        <FaCalendarAlt />
+        Schedule an Interview
+      </h3>
       <form onSubmit={handleAddInterview} className="job-form">
         <div className="form-row">
           <select
@@ -394,7 +404,7 @@ function InterviewScheduler() {
           });
           const reminder = formatReminderTag(dateStr, timeStr);
           const linkedJob = jobOptions.find(
-            (job) => job.id === interview.linkedJobId
+            (job) => job.id === interview.linkedJobId,
           );
 
           return (
@@ -429,10 +439,18 @@ function InterviewScheduler() {
                     <option value="Completed">Completed</option>
                     <option value="Canceled">Canceled</option>
                   </select>
+
                   <div className="button-group">
-                    <button onClick={handleSave}>💾 Save</button>
-                    <button onClick={() => setEditingID(null)}>
-                      ❌ Cancel
+                    <button className="save-btn" onClick={handleSave}>
+                      <FaSave />
+                      Save
+                    </button>
+                    <button
+                      className="cancel-btn"
+                      onClick={() => setEditingID(null)}
+                    >
+                      <FaTimes />
+                      Cancel
                     </button>
                   </div>
                 </>
@@ -470,11 +488,19 @@ function InterviewScheduler() {
                   {reminder && <div className="reminder-tag">{reminder}</div>}
 
                   <div className="button-group">
-                    <button onClick={() => handleEdit(interview)}>
-                      ✏️ Edit
+                    <button
+                      className="edit-btn"
+                      onClick={() => handleEdit(interview)}
+                    >
+                      <FaEdit />
+                      Edit
                     </button>
-                    <button onClick={() => handleDelete(interview.id)}>
-                      🗑️ Delete
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(interview.id)}
+                    >
+                      <FaTrash />
+                      Delete
                     </button>
                   </div>
                 </>

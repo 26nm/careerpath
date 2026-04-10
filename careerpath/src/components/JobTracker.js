@@ -23,6 +23,14 @@
 
 import React, { useState, useEffect } from "react";
 import {
+  FaPlus,
+  FaSave,
+  FaTimes,
+  FaEdit,
+  FaTrash,
+  FaBriefcase,
+} from "react-icons/fa";
+import {
   collection,
   addDoc,
   getDocs,
@@ -148,7 +156,10 @@ function JobTracker() {
 
   return (
     <div className="job-tracker">
-      <h3>Job Application Tracker 💼</h3>
+      <h3 className="section-title">
+        <FaBriefcase />
+        Job Tracker
+      </h3>
 
       {/* Add Job Section */}
       <div className="job-form-container">
@@ -175,7 +186,10 @@ function JobTracker() {
               <option value="Offer Received">Offer Received</option>
               <option value="Rejected">Rejected</option>
             </select>
-            <button type="submit">➕ Add</button>
+            <button type="submit">
+              <FaPlus />
+              Add
+            </button>
           </div>
         </form>
       </div>
@@ -204,9 +218,16 @@ function JobTracker() {
                       onChange={(e) => setEditCompany(e.target.value)}
                     />
                     <div className="button-group">
-                      <button onClick={handleSave}>💾 Save</button>
-                      <button onClick={() => setEditingId(null)}>
-                        ❌ Cancel
+                      <button className="save-btn" onClick={handleSave}>
+                        <FaSave />
+                        Save
+                      </button>
+                      <button
+                        className="cancel-btn"
+                        onClick={() => setEditingId(null)}
+                      >
+                        <FaTimes />
+                        Cancel
                       </button>
                     </div>
                   </>
@@ -244,14 +265,16 @@ function JobTracker() {
                         className="edit-btn"
                         onClick={() => handleEdit(app)}
                       >
-                        ✏️ Edit
+                        <FaEdit />
+                        Edit
                       </button>
 
                       <button
                         className="delete-btn"
                         onClick={() => handleDelete(app.id)}
                       >
-                        🗑 Delete
+                        <FaTrash />
+                        Delete
                       </button>
                     </div>
                   </>

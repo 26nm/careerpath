@@ -23,6 +23,14 @@
  */
 
 import React, { useState, useEffect } from "react";
+import {
+  FaChartBar,
+  FaFileAlt,
+  FaClipboardList,
+  FaSearch,
+  FaSave,
+  FaTrash,
+} from "react-icons/fa";
 import { extractSkillSignals } from "../utils/SkillExtractor";
 import { extractTerms } from "../utils/SkillExtractor";
 import { db } from "../firebase/firebase";
@@ -184,11 +192,17 @@ function ResumeParse({ resumeText }) {
 
   return (
     <div className="resume-parser">
-      <h3>Resume Analysis 📊</h3>
+      <h3 className="section-title">
+        <FaChartBar />
+        Resume Analysis
+      </h3>
 
       <div className="input-section">
         <div className="input-block">
-          <label htmlFor="qualifications">📄 Resume Qualifications</label>
+          <label htmlFor="qualifications" className="label-with-icon">
+            <FaFileAlt />
+            Resume Qualifications
+          </label>
           <textarea
             id="qualifications"
             placeholder="Paste Qualifications from Resume"
@@ -198,7 +212,10 @@ function ResumeParse({ resumeText }) {
         </div>
 
         <div className="input-block">
-          <label htmlFor="jobDesc">📌 Job Description</label>
+          <label htmlFor="jobDesc" className="label-with-icon">
+            <FaClipboardList />
+            Job Description
+          </label>
           <textarea
             id="jobDesc"
             placeholder="Paste Job Description"
@@ -208,7 +225,10 @@ function ResumeParse({ resumeText }) {
         </div>
       </div>
 
-      <button onClick={handleAnalyze}>🔍 Analyze Match</button>
+      <button onClick={handleAnalyze}>
+        <FaSearch />
+        Analyze Match
+      </button>
 
       {analysis && (
         <div className="analysis-result">
@@ -243,7 +263,10 @@ function ResumeParse({ resumeText }) {
             </div>
           )}
 
-          <button onClick={handleSave}>💾 Save Analysis</button>
+          <button className="save-btn" onClick={handleSave}>
+            <FaSave />
+            Save Analysis
+          </button>
         </div>
       )}
 
@@ -251,7 +274,7 @@ function ResumeParse({ resumeText }) {
         <h4>Saved Analyses</h4>
         {savedAnalyses.length === 0 ? (
           <div className="empty-state">
-            📝 No saved results yet. Start by pasting your resume and a job
+            No saved results yet. Start by pasting your resume and a job
             description above!
           </div>
         ) : (
@@ -270,6 +293,7 @@ function ResumeParse({ resumeText }) {
                 ))}
               </div>
               <button
+                className="delete-btn"
                 onClick={() => {
                   const confirmDelete = window.confirm(
                     "Are you sure you want to delete this analysis?",
@@ -277,7 +301,8 @@ function ResumeParse({ resumeText }) {
                   if (confirmDelete) handleDelete(item.id);
                 }}
               >
-                🗑️ Delete
+                <FaTrash />
+                Delete
               </button>
             </div>
           ))

@@ -16,6 +16,7 @@
  * May 3, 2025
  */
 import React, { useState } from "react";
+import { FaMapSigns } from "react-icons/fa";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
@@ -63,7 +64,10 @@ function Login() {
     <div className="auth-outer">
       <div className="auth-container">
         <div className="auth-header">
-          <h1 className="auth-branding">CareerPath 🗺️</h1>
+          <h1 className="auth-branding">
+            <FaMapSigns />
+            CareerPath
+          </h1>
           <p className="auth-tagline">Your career journey. All in one path.</p>
         </div>
         <form onSubmit={handleLogin}>

@@ -22,6 +22,7 @@
  * May 21, 2025
  */
 import React, { useState, useEffect } from "react";
+import { FaFileAlt, FaUpload, FaTrash, FaChartBar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { db, storage } from "../firebase/firebase";
 import { useAuth } from "../contexts/AuthContext";
@@ -107,7 +108,7 @@ function ResumeUploader() {
     try {
       const storageRef = ref(
         storage,
-        `resumes/${currentUser.uid}/${file.name}`
+        `resumes/${currentUser.uid}/${file.name}`,
       );
       await uploadBytes(storageRef, file);
 
@@ -122,7 +123,7 @@ function ResumeUploader() {
       while (attempts < maxAttempts && !resumeDetected) {
         const snapshot = await getDocs(resumeRef);
         const found = snapshot.docs.find(
-          (doc) => doc.data().fileName === file.name
+          (doc) => doc.data().fileName === file.name,
         );
 
         if (found) {
@@ -175,7 +176,7 @@ function ResumeUploader() {
     } catch (err) {
       console.warn(
         "Storage file already missing or failed to delete:",
-        err.message
+        err.message,
       );
     }
 
@@ -189,7 +190,10 @@ function ResumeUploader() {
 
   return (
     <div className="resume-uploader">
-      <h3>Upload Resume 📄</h3>
+      <h3 className="section-title">
+        <FaFileAlt />
+        Upload Resume
+      </h3>
       <input
         type="file"
         accept=".pdf,.doc,.docx,.txt"
@@ -197,7 +201,8 @@ function ResumeUploader() {
       />
       {isUploading && <p>Uploading resume...</p>}
       <button onClick={handleUpload} disabled={!file}>
-        📤 Upload
+        <FaUpload />
+        Upload
       </button>
 
       <div className="resume-list">
@@ -210,17 +215,23 @@ function ResumeUploader() {
               <a href={resume.url} target="_blank" rel="noopener noreferrer">
                 {resume.fileName}
               </a>
-              <button onClick={() => handleDelete(resume.id, resume.fileName)}>
-                🗑 Delete
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(resume.id, resume.fileName)}
+              >
+                <FaTrash />
+                Delete
               </button>
               <button
+                className="analyze-btn"
                 onClick={() => {
                   navigate("/dashboard/resume-analysis", {
                     state: { resumeText: resume.matchedSkills },
                   });
                 }}
               >
-                🧠 Analyze
+                <FaChartBar />
+                Analyze
               </button>
             </div>
           ))

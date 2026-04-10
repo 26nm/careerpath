@@ -233,6 +233,17 @@
   border-radius: 8px;
 }
 
+.button-group svg {
+  margin-right: 6px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 @media (max-width: 600px) {
   .button-group {
     justify-content: flex-start;

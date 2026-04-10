@@ -1,3 +1,4 @@
+import { FaChartBar, FaBriefcase, FaCalendarAlt } from "react-icons/fa";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/HomePage.css";
@@ -55,7 +56,10 @@ function HomePage() {
       {/* Features Section */}
       <div className="features">
         <div className="feature-card">
-          <h3> 📊 Resume Analysis</h3>
+          <h3 className="feature-title">
+            <FaChartBar />
+            Resume Analysis
+          </h3>
           <p>
             Compare you resume with job descriptions to identify gaps and
             improve your chances of getting hired.
@@ -63,12 +67,18 @@ function HomePage() {
         </div>
 
         <div className="feature-card">
-          <h3>💼 Job Tracker</h3>
+          <h3 className="feature-title">
+            <FaBriefcase />
+            Job Tracker
+          </h3>
           <p> Keep all your applications organized in one place.</p>
         </div>
 
         <div className="feature-card">
-          <h3>🗓️ Interview Scheduler</h3>
+          <h3 className="feature-title">
+            <FaCalendarAlt />
+            Interview Scheduler
+          </h3>
           <p> Track interviews and never miss an important date.</p>
         </div>
       </div>

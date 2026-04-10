@@ -17,6 +17,7 @@
  * May 3, 2025
  */
 import React, { useState } from "react";
+import { FaUserPlus } from "react-icons/fa";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
@@ -64,32 +65,35 @@ function Signup() {
   };
 
   return (
-    <div className = "auth-outer">
-    <div className="auth-container">
-      <h2 className="auth-branding">Sign Up 👤</h2>
-      <p className="auth-tagline"> Your career journey starts here.</p>
-      <form onSubmit={handleSignup}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Sign Up</button>
-      </form>
-      {error && <p className="auth-error">{error}</p>}
-      <div className="auth-footer">
-        Already have an account? <Link to="/login">Log in</Link>
+    <div className="auth-outer">
+      <div className="auth-container">
+        <h2 className="auth-branding">
+          <FaUserPlus />
+          Sign Up
+        </h2>
+        <p className="auth-tagline"> Your career journey starts here.</p>
+        <form onSubmit={handleSignup}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit">Sign Up</button>
+        </form>
+        {error && <p className="auth-error">{error}</p>}
+        <div className="auth-footer">
+          Already have an account? <Link to="/login">Log in</Link>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
