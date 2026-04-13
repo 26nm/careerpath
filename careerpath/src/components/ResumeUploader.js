@@ -36,6 +36,8 @@ import {
 } from "firebase/firestore";
 import { onSnapshot } from "firebase/firestore";
 import { getDownloadURL } from "firebase/storage";
+import { functions } from "../firebase/firebase";
+import { httpsCallable } from "firebase/functions";
 import "../styles/ResumeUploader.css";
 // import ResumeParse from "./ResumeParse";
 
@@ -88,22 +90,17 @@ function ResumeUploader() {
   }, [currentUser]);
 
   const waitForProcessedResume = async (userId) => {
-    for (let i = 0; i < 10; i++) {
-      const snapshot = await getDocs(
-        collection(db, "users", userId, "resumes"),
-      );
+    const snapshot = await getDocs(collection(db, "users", userId, "resumes"));
 
-      const resumes = snapshot.docs.map((doc) => doc.data());
-      const latest = resumes[resumes.length - 1];
+    const resumes = snapshot.docs.map((doc) => doc.data());
 
-      if (latest?.extractedSkills?.length > 0) {
-        return latest;
-      }
+    console.log("RAW DOCS:", resumes);
 
-      await new Promise((res) => setTimeout(res, 1000));
-    }
+    const target = resumes.find((r) => r.resumeText);
 
-    return null;
+    console.log("TARGET:", target);
+
+    return target || null;
   };
 
   /**
@@ -247,14 +244,34 @@ function ResumeUploader() {
                   const processedResume = await waitForProcessedResume(
                     currentUser.uid,
                   );
+
                   if (!processedResume) {
                     console.error("Resume not ready yet.");
                     return;
                   }
 
-                  navigate("/dashboard/resume-analysis", {
-                    state: { resumeText: processedResume.resumeText },
-                  });
+                  const analyzeResume = httpsCallable(
+                    functions,
+                    "analyzeResume",
+                  );
+
+                  try {
+                    const res = await analyzeResume({
+                      resumeText: processedResume.resumeText,
+                      jobText: "",
+                    });
+
+                    console.log("RESUME AI:", res.data);
+
+                    navigate("/dashboard/resume-analysis", {
+                      state: {
+                        resumeText: processedResume.resumeText,
+                        resumeSkills: res.data.resumeSkills,
+                      },
+                    });
+                  } catch (error) {
+                    console.error("AI analyze failed:", error);
+                  }
                 }}
               >
                 <FaChartBar />

@@ -26,6 +26,7 @@
  * Nolan Dela Rosa
  * July 29, 2025
  */
+require("dotenv").config();
 const { onObjectFinalized } = require("firebase-functions/v2/storage");
 const { logger } = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -35,50 +36,52 @@ const mammoth = require("mammoth");
 const path = require("path");
 const os = require("os");
 const fs = require("fs");
-const ignoreWords = require("./utils/IgnoreWords");
+const { onCall } = require("firebase-functions/v2/https");
+// const nlp = require("compromise");
+const OpenAI = require("openai");
 
 admin.initializeApp();
 const gcs = new Storage();
 
-// convert once -> fast lookups
-const ignoreSet = new Set(ignoreWords);
+/* =======================
+AI-Powered Resume Parsing
+======================== */
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-// normalize ignore words (adapted from NormalizeText.js)
-const normalizeText = (text) => {
-  return text
-    .toLowerCase()
-    .replace(/node\.?js/g, "nodejs")
-    .replace(/react\.?js/g, "react")
-    .replace(/vue\.?js/g, "vue")
-    .replace(/angular\.?js/g, "angular")
-    .replace(/restful api(s)?/g, "rest api")
-    .replace(/rest api(s)?/g, "rest api")
-    .replace(/ci\/cd|ci cd|ci-cd/g, "cicd")
-    .replace(/google cloud platform/g, "gcp")
-    .replace(/amazon web services|aws cloud/g, "aws")
-    .replace(/tailwind css/g, "tailwind")
-    .replace(/html5/g, "html")
-    .replace(/css3/g, "css")
-    .replace(/\s+/g, " ")
-    .trim();
-};
+console.log("API KEY EXISTS:", !!process.env.OPENAI_API_KEY);
 
-// extract meaningful keywords
-const extractKeywords = (text) => {
-  const normalized = normalizeText(text);
-  const tokens = normalized.split(" ");
+async function extractSkillsWithAI(text) {
+  const response = await client.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content:
+          "Extract professional skills from the text. Return ONLY a JSON array of skills. NO markdown, backticks, or explanations.",
+      },
+      {
+        role: "user",
+        content: text,
+      },
+    ],
+  });
 
-  return tokens
-    .map((word) => word.replace(/[^\w+#]/g, "").trim())
-    .filter(
-      (word, idx) =>
-        word.length > 2 &&
-        !ignoreSet.has(word) &&
-        tokens.indexOf(word) == idx &&
-        !/\d/.test(word),
-    );
-};
+  const raw = response.choices[0].message.content;
 
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn("AI parse failed:", raw);
+    return [];
+  }
+}
+
+/* =======================
+  Storage Trigger
+======================== */
 exports.parseResumeText = onObjectFinalized(async (event) => {
   const object = event.data;
   const filePath = object.name;
@@ -115,7 +118,8 @@ exports.parseResumeText = onObjectFinalized(async (event) => {
     }
 
     // improved extraction
-    const extractedSkills = extractKeywords(extractedText);
+    //const rawTerms = extractMeaningfulTerms(extractedText);
+    // const rankedTerms = rankTerms(rawTerms).slice(0, 30);
 
     const userId = filePath.split("/")[1];
     const dbRef = admin
@@ -126,7 +130,6 @@ exports.parseResumeText = onObjectFinalized(async (event) => {
 
     await dbRef.add({
       fileName,
-      extractedSkills,
       resumeText: extractedText,
       uploadedAt: new Date().toISOString(),
       url: `https://firebasestorage.googleapis.com/v0/b/${
@@ -140,4 +143,23 @@ exports.parseResumeText = onObjectFinalized(async (event) => {
   }
 
   return null;
+});
+
+/* =======================
+  Callable Analysis
+======================== */
+exports.analyzeResume = onCall(async (request) => {
+  const { resumeText, jobText } = request.data;
+
+  if (!resumeText && !jobText) {
+    throw new Error("Missing resumeText or jobText");
+  }
+
+  const resumeSkills = await extractSkillsWithAI(resumeText);
+  const jobSkills = await extractSkillsWithAI(jobText);
+
+  console.log("Resume Skills:", resumeSkills);
+  console.log("Job Skills:", jobSkills);
+
+  return { resumeSkills, jobSkills };
 });

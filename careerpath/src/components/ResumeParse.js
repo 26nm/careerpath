@@ -31,13 +31,13 @@ import {
   FaSave,
   FaTrash,
 } from "react-icons/fa";
-import { extractSkillSignals } from "../utils/SkillExtractor";
-import { extractTerms } from "../utils/SkillExtractor";
 import { db } from "../firebase/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useLocation } from "react-router-dom";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "../firebase/firebase";
 import "../styles/ResumeAnalyzer.css";
 
 /**
@@ -68,7 +68,7 @@ function ResumeParse({ resumeText }) {
   const [savedAnalyses, setSavedAnalyses] = useState([]);
   const { currentUser } = useAuth();
   const location = useLocation();
-  const resumeTextFromNav = location.state?.resumeText;
+  const resumeSkillsFromNav = location.state?.resumeSkills || [];
 
   /**
    * Auto-fills the qualifications textarea with extracted resume text
@@ -77,15 +77,10 @@ function ResumeParse({ resumeText }) {
    * instead of requiring manual copy-paste.
    */
   useEffect(() => {
-    const textToUse = resumeText || resumeTextFromNav;
-
-    if (textToUse) {
-      const formatted = Array.isArray(textToUse)
-        ? textToUse.join(", ")
-        : textToUse;
-      setQualifications(formatted);
+    if (location.state?.resumeText) {
+      setQualifications(location.state.resumeText);
     }
-  }, [resumeText, resumeTextFromNav]);
+  }, [location.state]);
 
   /**
    * handleAnalyze()
@@ -94,47 +89,43 @@ function ResumeParse({ resumeText }) {
    * with the job description using `analyzeMatch()`, then updates the
    * component state with the result.
    */
-  const handleAnalyze = () => {
-    const { matched } = extractSkillSignals(qualifications, jobDescription);
+  const handleAnalyze = async () => {
+    if (!jobDescription) return;
 
-    const jobSkills = extractTerms(jobDescription);
-    const uniqueJobSkills = Array.from(new Set(jobSkills));
-    const matchedSkills = matched.map((m) => m.skill);
+    try {
+      const analyzeResume = httpsCallable(functions, "analyzeResume");
 
-    const LOW_SIGNAL = new Set([
-      "software",
-      "data",
-      "development",
-      "services",
-      "system",
-      "life",
-      "cycle",
-      "applications",
-      "building",
-    ]);
+      const res = await analyzeResume({
+        resumeText: "",
+        jobText: jobDescription,
+      });
 
-    const filteredJobSkills = uniqueJobSkills.filter(
-      (skill) => !LOW_SIGNAL.has(skill),
-    );
+      console.log("JOB AI:", res.data);
 
-    const filteredMatchedSkills = matchedSkills.filter(
-      (skill) => !LOW_SIGNAL.has(skill),
-    );
+      const resumeSkills = resumeSkillsFromNav || [];
+      const jobSkills = res.data.jobSkills || [];
 
-    const missing = filteredJobSkills.filter(
-      (skill) => !filteredMatchedSkills.includes(skill),
-    );
+      const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9+#]/g, "");
 
-    const matchRate =
-      filteredJobSkills.length > 0
-        ? `${Math.round((filteredMatchedSkills.length / filteredJobSkills.length) * 100)}%`
-        : "0%";
+      const resumeSet = new Set(resumeSkills.map(normalize));
+      const jobSet = new Set(jobSkills.map(normalize));
 
-    setAnalysis({
-      matched: filteredMatchedSkills,
-      missing,
-      matchRate,
-    });
+      const matched = [...resumeSet].filter((s) => jobSet.has(s));
+      const missing = [...jobSet].filter((s) => !resumeSet.has(s));
+
+      const matchRate =
+        jobSet.size > 0
+          ? `${Math.round((matched.length / jobSet.size) * 100)}%`
+          : "0%";
+
+      setAnalysis({
+        matched,
+        missing,
+        matchRate,
+      });
+    } catch (err) {
+      console.error("Analysis failed:", err);
+    }
   };
 
   /**
@@ -209,6 +200,30 @@ function ResumeParse({ resumeText }) {
             value={qualifications}
             onChange={(e) => setQualifications(e.target.value)}
           />
+
+          {resumeSkillsFromNav.length > 0 && (
+            <div style={{ marginTop: "12px" }}>
+              <strong>Extracted Skills:</strong>
+              <div style={{ marginTop: "6px" }}>
+                {resumeSkillsFromNav.map((skill, index) => (
+                  <span
+                    key={index}
+                    style={{
+                      display: "inline-block",
+                      backgroundColor: "#eef2ff",
+                      color: "#3730a3",
+                      padding: "4px 8px",
+                      margin: "4px",
+                      borderRadius: "6px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="input-block">
