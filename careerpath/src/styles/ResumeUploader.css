@@ -60,8 +60,25 @@
   font-weight: bold;
   font-size: 0.95rem;
   margin-top: 0.5rem;
-  width: 100%;
+  width: auto;
   transition: background-color 0.2s;
+}
+
+.upload-btn {
+  width: auto;
+  align-self: center;
+  padding: 0.6rem 1.5rem;
+  background: linear-gradient(to right, #6366f1, #7c83ff);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .resume-uploader button:hover {

@@ -381,7 +381,9 @@ function InterviewScheduler() {
             onChange={(e) => setDatetime(e.target.value)}
             required
           />
-          <button type="submit">Add Interview</button>
+          <button className="add-interview-btn" type="submit">
+            Add Interview
+          </button>
         </div>
       </form>
 

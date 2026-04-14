@@ -216,7 +216,7 @@ function ResumeUploader() {
         onChange={(e) => setFile(e.target.files[0])}
       />
       {isUploading && <p>Uploading resume...</p>}
-      <button onClick={handleUpload} disabled={!file}>
+      <button className="upload-btn" uponClick={handleUpload} disabled={!file}>
         <FaUpload />
         Upload
       </button>

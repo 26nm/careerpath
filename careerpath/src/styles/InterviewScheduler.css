@@ -244,6 +244,19 @@
   gap: 8px;
 }
 
+.add-interview-btn {
+  width: auto;
+  align-self: center;
+  padding: 0.6rem 1.5rem;
+  background: linear-gradient(to right, #6366f1, #7c83ff);
+  justify-content: center;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 @media (max-width: 600px) {
   .button-group {
     justify-content: flex-start;
