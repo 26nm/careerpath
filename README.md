@@ -2,7 +2,7 @@
 
 CareerPath is a full-stack web application designed to streamline the job search process by combining application tracking, interview scheduling, and AI-powered resume analysis into one unified platform.  
 
-Start your career journey here: https://careerpath-cad61.web.app/
+🔗 https://careerpath-cad61.web.app/
 
 ---
 
